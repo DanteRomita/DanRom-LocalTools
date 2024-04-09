@@ -82,7 +82,7 @@ function onlyASCII(str) {
 
 function removeNonASCII(path) {
     let items = fs.readdirSync(path)
-    for (item of items) fs.renameSync(`${path}/${item}`, `${path}/${onlyASCII(item)}`)
+    for (i of items) fs.renameSync(`${path}/${i}`, `${path}/${onlyASCII(i)}`)
 }
 
 function makeDir(dirPath) { if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath) }
@@ -108,7 +108,7 @@ const dirPathsToMake = [
 
 for (dirPath of dirPathsToMake) makeDir(dirPath)
 
-const ReturnToHomeStr = `<p><button style='font-size: x-large' onclick=window.history.back()='/'>Return to Home</button></p>`
+const ReturnToHomeStr = `<p><button style='font-size: large' onclick=window.history.back()='/'>Return to Home</button></p>`
 function scriptSuccessMessage(path, fileName) {
     return `
     <body style='font-family: arial; word-wrap: break-word'>
@@ -253,7 +253,7 @@ app.route(`/*`)
         })
     })
 
-    app.route(`/YT-DLP_GUI`)
+app.route(`/YT-DLP_GUI`)
     .post((req, res) => {
         mostRecentForm = `YT-DLP_GUI`
 
@@ -273,6 +273,29 @@ app.route(`/*`)
         else if (req.body.RemoveNonASCII) {
             removeNonASCII(YTDLP_Path)
             res.send(removeNonASCIISuccessMessage(YTDLP_Path))
+        } else if (req.body.AudioAndImageToVid) {
+            const fileName = `_AudioAndImageToVid.ps1`
+            let items = fs.readdirSync(YTDLP_Path)
+            let commandStr = ``
+
+            for (item of items) {
+                if (item.endsWith(`.mp3`) && item !== fileName) {
+                    let mp3Item = item
+                    let imgItem
+                    if (req.body.UseBlack) imgItem = `_black.jfif`
+                    else imgItem = item.replaceAll(`.mp3`, `.png`)
+                    itemNoExt = item
+                    itemNoExt = itemNoExt.replaceAll(`.mp3`, ``); itemNoExt = itemNoExt.replaceAll(`.png`, ``).replaceAll(`.jfif`, ``)
+    
+                    commandStr += `python _AudioAndImageToVid.py "${imgItem}" "${mp3Item}" "${itemNoExt}.mp4"\n`
+                }
+            }
+    
+            commandStr += powerOp(req.body.PowerOp)
+
+            writeFileToServer(`${commandStr}${finalLine}`, `${YTDLP_Path}/${fileName}`)
+            openDir(YTDLP_Path, openDirWithScript)
+            res.send(scriptSuccessMessage(YTDLP_Path, fileName))
         } else if (!URLs || !YTDLP_Path || (!Video && !Audio && !Thumbnail && !Subtitles && !Comments)) res.send(incompleteForm(req))
         else {
             let commandStr = ``

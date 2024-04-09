@@ -182,10 +182,19 @@
             <label for="PowerOp_ShutDown-YT-DLP">Shut Down</label><br>
 
             <p>
-                <input style="font-size: 18pt" type="submit" name="RunScript" value="📜">
-                <input style="font-size: 18pt" type="submit" name="OpenDir" value="📂">
-                <input style="font-size: 18pt" type="submit" name="RemoveNonASCII" value="🔠">
+                <input style="font-size: x-large" type="submit" name="RunScript" value="📜">
+                <input style="font-size: x-large" type="submit" name="OpenDir" value="📂">
+                <input style="font-size: x-large" type="submit" name="RemoveNonASCII" value="🔡">
             </p>
+
+            <input style="font-size: large" type="submit" name="AudioAndImageToVid" value="Audio + Image To Video*">
+            <p>*Takes all mp3s and pngs in the folder and creates a video, provided each respective file exists and has the same name excluding the file extension.</p>
+
+            <p>If you just want to add black image to an MP3 for the purposes of copyright checking, check the box
+                below. The <b>black.jfif</b> file will be used instead.</p>
+
+            <input type="checkbox" name="UseBlack" id="AudioImageToMP4_UseBlack">
+            <label for="AudioImageToMP4_UseBlack">Use Black Image Instead</label>
         </fieldset>
     </form>
 
