@@ -17,36 +17,39 @@ const finalLine = `\necho 'COMPLETE!'`
 //-----Path Constants-----//
 
 const YTDLP_Path = `___YT-DLP`
-const LoopMedia_Path = `_LoopMedia`
-const ReverseMedia_Path = `_ReverseMedia`
-const ReduceMedia_Path = `_ReduceMediaDimensions`
-const ListedFilesInFolder_Path = `_ListedFilesInFolder`
-const ListSubFolders_Path = `_ListSubFolders`
-const ReduceFPS_Path = `_ReduceFPS`
-const ScaleMedia_Path = `_ScaleMedia`
-const ConvertOptimizedMedia_Path = `_ConvertOptimizedMedia`
-const TrimMedia_Path = `_TrimMedia`
-const GenerateProxyMedia_Path = `_GenerateProxyMedia`
-const OptimizeMedia_Path = `_OptimizeMedia`
-const AdjustAudio_Path = `_AdjustAudio`
+const FFMPEG_Path = `___FFMPEG`
+
+// const LoopMedia_Path = `_LoopMedia`
+// const ReverseMedia_Path = `_ReverseMedia`
+// const ReduceMedia_Path = `_ReduceMediaDimensions`
+// const ListedFilesInFolder_Path = `_ListedFilesInFolder`
+// const ListSubFolders_Path = `_ListSubFolders`
+// const ReduceFPS_Path = `_ReduceFPS`
+// const ScaleMedia_Path = `_ScaleMedia`
+// const ConvertOptimizedMedia_Path = `_ConvertOptimizedMedia`
+// const TrimMedia_Path = `_TrimMedia`
+// const GenerateProxyMedia_Path = `_GenerateProxyMedia`
+// const OptimizeMedia_Path = `_OptimizeMedia`
+// const AdjustAudio_Path = `_AdjustAudio`
 
 //-----File To Always Keep-----//
 
 const FilesToAlwaysKeep = [
-    // Base Folder
-    `_AdjustAudio`,
-    `_ConvertOptimizedMedia`,
-    `_GenerateProxyMedia`,
-    `_ListedFilesInFolder`,
-    `_ListSubFolders`,
-    `_LoopMedia`,
-    `_OptimizeMedia`,
-    `_ReduceFPS`,
-    `_ReduceMediaDimensions`,
-    `_ReverseMedia`,
-    `_ScaleMedia`,
-    `_TrimMedia`,
+    // Base Folders
+    // `_AdjustAudio`,
+    // `_ConvertOptimizedMedia`,
+    // `_GenerateProxyMedia`,
+    // `_ListedFilesInFolder`,
+    // `_ListSubFolders`,
+    // `_LoopMedia`,
+    // `_OptimizeMedia`,
+    // `_ReduceFPS`,
+    // `_ReduceMediaDimensions`,
+    // `_ReverseMedia`,
+    // `_ScaleMedia`,
+    // `_TrimMedia`,
     `___YT-DLP`,
+    `___FFMPEG`,
     `.git`,
     `.gitattributes`,
     `.gitignore`,
@@ -92,29 +95,30 @@ function openDir(dir, option) {
 }
 
 const dirPathsToMake = [
-    LoopMedia_Path,
-    ReverseMedia_Path,
-    ReduceMedia_Path,
-    ListedFilesInFolder_Path,
-    ListSubFolders_Path,
-    ReduceFPS_Path,
-    ScaleMedia_Path,
-    ConvertOptimizedMedia_Path,
-    TrimMedia_Path,
-    GenerateProxyMedia_Path,
-    OptimizeMedia_Path,
-    AdjustAudio_Path,
+    FFMPEG_Path
+    // LoopMedia_Path,
+    // ReverseMedia_Path,
+    // ReduceMedia_Path,
+    // ListedFilesInFolder_Path,
+    // ListSubFolders_Path,
+    // ReduceFPS_Path,
+    // ScaleMedia_Path,
+    // ConvertOptimizedMedia_Path,
+    // TrimMedia_Path,
+    // GenerateProxyMedia_Path,
+    // OptimizeMedia_Path,
+    // AdjustAudio_Path,
 ]
 
 for (dirPath of dirPathsToMake) makeDir(dirPath)
 
-const ReturnToHomeStr = `<p><button style='font-size: large' onclick=window.history.back()='/'>Return to Home</button></p>`
+const ReturnToFormBtn = `<p><button style='font-size: large' onclick=window.history.back()='/'>Return to Form</button></p>`
 function scriptSuccessMessage(path, fileName) {
     return `
     <body style='font-family: arial; word-wrap: break-word'>
         <h1 style='color:green'>Success!</h1>
         <p>Navigate to the <b>${path}</b> folder in the project to find the <b>${fileName}</b> file.
-        ${ReturnToHomeStr}
+        ${ReturnToFormBtn}
     </body>
     `
 }
@@ -124,7 +128,7 @@ function removeNonASCIISuccessMessage(path) {
     <body style='font-family: arial; word-wrap: break-word'>
         <h1 style='color:green'>All Non-ASCII Characters Removed!</h1>
         <p>All non-ASCII characters have been removed from the <b>${path}</b> folder.</p>
-        ${ReturnToHomeStr}
+        ${ReturnToFormBtn}
     </body>
     `
 }
@@ -133,7 +137,7 @@ function incompleteForm(req) {
     return `
     <body style='font-family: arial; word-wrap: break-word'>
         <h1 style='color:orange'>Incomplete Form</h1>
-        ${ReturnToHomeStr}
+        ${ReturnToFormBtn}
         <h2>Form Data Submitted</h2>
         <pre>${JSON.stringify(req.body, null, 2)}</pre>
     `
@@ -220,6 +224,36 @@ function FileNameURL_Helper(FileNameURLs, isURL) {
     return outputHTMLstr
 }
 
+function handleMarkLarger(inFile, outFile, fileName, ext) {
+    let fileStr = ext ? `${removeExt(inFile)}.${ext}` : `${inFile}`
+    if (inFile !== fileName && !(FilesToAlwaysKeep.includes(inFile))) {
+        return `$inFile = Get-Item -LiteralPath "${inFile}"
+$outFile = Get-Item -LiteralPath "${outFile}"
+If ($inFile.Length -gt $outFile.Length) {
+    Rename-Item -LiteralPath "${inFile}" -NewName "_____LARGER ${inFile}"
+    Rename-Item -LiteralPath "${outFile}" -NewName "${fileStr}"
+}\n`
+    }
+}
+
+function handleMarkInput(inFile, outFile, fileName, ext) {
+    if (inputFilesMarked) marker = `TEMP`
+
+    let fileStr = ext ? `${removeExt(inFile)}.${ext}` : `${inFile}`
+    if (inFile !== fileName && !(FilesToAlwaysKeep.includes(inFile))) {
+        return `Rename-Item -LiteralPath "${inFile}" -NewName "_____${marker} ${inFile}"
+        Rename-Item -LiteralPath "${outFile}" -NewName "${fileStr}"\n`
+    }
+}
+
+function handleMarking(inFile, outFile, fileName, MarkOption, ext) {
+    console.log(`MarkOption: ${MarkOption}`)
+    let markingCommands = ``
+    if (MarkOption === `MarkLarger`) markingCommands = handleMarkLarger(inFile, outFile, fileName, ext)
+    if (MarkOption === `MarkInput`) markingCommands = handleMarkInput(inFile, outFile, fileName, ext)
+    return markingCommands
+}
+
 //--END OF HELPER FUNCTIONS--//
 
 //--BEGINNING OF GLOBAL OPTION VARIABLE INITIALIZATIONS--//
@@ -234,22 +268,23 @@ let mostRecentForm = ``
 app.route(`/*`)
     .get((req, res) => {
         res.render(`index`, {
-            //Global Options
+            // Global Options
             openDirWithScript: openDirWithScript,
             mostRecentForm: mostRecentForm,
 
-            //Path Values
+            // Path Values
             YTDLP_Path: YTDLP_Path,
-            LoopMedia_Path: LoopMedia_Path,
-            ReverseMedia_Path: ReverseMedia_Path,
-            ReduceMedia_Path: ReduceMedia_Path,
-            ReduceFPS_Path: ReduceFPS_Path,
-            ScaleMedia_Path: ScaleMedia_Path,
-            ConvertOptimizedMedia_Path: ConvertOptimizedMedia_Path,
-            TrimMedia_Path: TrimMedia_Path,
-            GenerateProxyMedia_Path: GenerateProxyMedia_Path,
-            OptimizeMedia_Path: OptimizeMedia_Path,
-            AdjustAudio_Path: AdjustAudio_Path
+            FFMPEG_Path: FFMPEG_Path,
+            // LoopMedia_Path: LoopMedia_Path,
+            // ReverseMedia_Path: ReverseMedia_Path,
+            // ReduceMedia_Path: ReduceMedia_Path,
+            // ReduceFPS_Path: ReduceFPS_Path,
+            // ScaleMedia_Path: ScaleMedia_Path,
+            // ConvertOptimizedMedia_Path: ConvertOptimizedMedia_Path,
+            // TrimMedia_Path: TrimMedia_Path,
+            // GenerateProxyMedia_Path: GenerateProxyMedia_Path,
+            // OptimizeMedia_Path: OptimizeMedia_Path,
+            // AdjustAudio_Path: AdjustAudio_Path
         })
     })
 
@@ -269,64 +304,271 @@ app.route(`/YT-DLP_GUI`)
 
         let Channel = req.body.Channel
 
-        if (req.body.OpenDir) openDir(YTDLP_Path, true)
+        // Check if form is complete
+        if (!URLs || !YTDLP_Path || (!Video && !Audio && !Thumbnail && !Subtitles && !Comments)) {
+            res.send(incompleteForm(req));
+            return
+        }
+
+        // Opens the YT-DLP folder
+        else if (req.body.OpenDir) {
+            openDir(YTDLP_Path, true);
+            return
+        }
+
+        // Removes non-ASCII characters in the YT-DLP folder
         else if (req.body.RemoveNonASCII) {
-            removeNonASCII(YTDLP_Path)
-            res.send(removeNonASCIISuccessMessage(YTDLP_Path))
-        } else if (req.body.AudioAndImageToVid) {
-            const fileName = `_AudioAndImageToVid.ps1`
-            let items = fs.readdirSync(YTDLP_Path)
-            let commandStr = ``
+            removeNonASCII(YTDLP_Path);
+            res.send(removeNonASCIISuccessMessage(YTDLP_Path));
+            return
+        }
+
+        // Creates the AudioAndImageToVid.ps1 script
+        else if (req.body.AudioAndImageToVid) {
+            const fileName = `_AudioAndImageToVid.ps1`;
+            let items = fs.readdirSync(YTDLP_Path);
+            let commandStr = ``;
 
             for (item of items) {
                 if (item.endsWith(`.mp3`) && item !== fileName) {
-                    let mp3Item = item
-                    let imgItem
-                    if (req.body.UseBlack) imgItem = `_black.jfif`
-                    else imgItem = item.replaceAll(`.mp3`, `.png`)
-                    itemNoExt = item
-                    itemNoExt = itemNoExt.replaceAll(`.mp3`, ``); itemNoExt = itemNoExt.replaceAll(`.png`, ``).replaceAll(`.jfif`, ``)
-    
-                    commandStr += `python _AudioAndImageToVid.py "${imgItem}" "${mp3Item}" "${itemNoExt}.mp4"\n`
+                    let mp3Item = item;
+                    let imgItem = req.body.UseBlack ? `_black.jfif` : item.replaceAll(`.mp3`, `.png`);
+                    let itemNoExt = item.replaceAll(`.mp3`, ``).replaceAll(`.png`, ``).replaceAll(`.jfif`, ``);
+
+                    commandStr += `python _AudioAndImageToVid.py "${imgItem}" "${mp3Item}" "${itemNoExt}.mp4"\n`;
                 }
             }
-    
-            commandStr += powerOp(req.body.PowerOp)
 
-            writeFileToServer(`${commandStr}${finalLine}`, `${YTDLP_Path}/${fileName}`)
-            openDir(YTDLP_Path, openDirWithScript)
-            res.send(scriptSuccessMessage(YTDLP_Path, fileName))
-        } else if (!URLs || !YTDLP_Path || (!Video && !Audio && !Thumbnail && !Subtitles && !Comments)) res.send(incompleteForm(req))
-        else {
-            let commandStr = ``
-            let baseStr = `./${YTDLP_Path} -o '`
-            if (Channel) baseStr += `%(uploader)s - `
-            baseStr += `%(title)s.%(ext)s'`
+            commandStr += powerOp(req.body.PowerOp);
+
+            writeFileToServer(`${commandStr}${finalLine}`, `${YTDLP_Path}/${fileName}`);
+            openDir(YTDLP_Path, openDirWithScript);
+            res.send(scriptSuccessMessage(YTDLP_Path, fileName));
+            return
+        }
+
+        // Creates the main YT-DLP script titled "__DownloadFiles.ps1"
+        else if (!req.body.OpenDir && !req.body.RemoveNonASCII && !req.body.AudioAndImageToVid) {
+            let commandStr = ``;
+            let baseStr = `./${YTDLP_Path} -o '`;
+            if (Channel) baseStr += `%(uploader)s - `;
+            baseStr += `%(title)s.%(ext)s'`;
 
             for (URL of URLs) {
                 if (Video) {
-                    if (VidRes === `Best`) commandStr += commandStr += `${baseStr} '${URL}' -f bestvideo[ext=mp4]+bestaudio/best/best[ext=mp4]/best --embed-chapters --remux-video mp4 ${ytdlpHelper(Thumbnail, Subtitles, Comments)}\n`
-                    else commandStr += `${baseStr} '${URL}' -f bestvideo[height=${VidRes}][ext=mp4]+bestaudio/best[height=${VidRes}]/best[ext=mp4]/best --embed-chapters --remux-video mp4 ${ytdlpHelper(Thumbnail, Subtitles, Comments)}\n`
+                    if (VidRes === `Best`) {
+                        commandStr += `${baseStr} '${URL}' -f bestvideo[ext=mp4]+bestaudio/best/best[ext=mp4]/best --embed-chapters --remux-video mp4 ${ytdlpHelper(Thumbnail, Subtitles, Comments)}\n`;
+                    } else {
+                        commandStr += `${baseStr} '${URL}' -f bestvideo[height=${VidRes}][ext=mp4]+bestaudio/best[height=${VidRes}]/best[ext=mp4]/best --embed-chapters --remux-video mp4 ${ytdlpHelper(Thumbnail, Subtitles, Comments)}\n`;
+                    }
                 }
 
                 if (Audio) {
-                    commandStr += `${baseStr} '${URL}' -x --audio-format mp3 `
-                    if (!Video) commandStr += `${ytdlpHelper(Thumbnail, Subtitles, Comments)} `
-                    commandStr += `\n`
+                    commandStr += `${baseStr} '${URL}' -x --audio-format mp3 `;
+                    if (!Video) commandStr += `${ytdlpHelper(Thumbnail, Subtitles, Comments)} `;
+                    commandStr += `\n`;
                 }
 
                 if (!(Video || Audio)) {
-                    commandStr += `${baseStr} '${URL}' ${ytdlpHelper(Thumbnail, Subtitles, Comments)} --max-filesize 0.001k\n`
+                    commandStr += `${baseStr} '${URL}' ${ytdlpHelper(Thumbnail, Subtitles, Comments)} --max-filesize 0.001k\n`;
                 }
             }
 
-            commandStr += powerOp(req.body.PowerOp)
-            commandStr = `./${YTDLP_Path} -U\n${commandStr}`
+            commandStr += powerOp(req.body.PowerOp);
+            commandStr = `./${YTDLP_Path} -U\n${commandStr}`;
 
-            let fileName = `__DownloadFiles.ps1`
-            writeFileToServer(`${commandStr}${finalLine}`, `${YTDLP_Path}/${fileName}`)
-            openDir(YTDLP_Path, openDirWithScript)
-            res.send(scriptSuccessMessage(YTDLP_Path, fileName))
+            let fileName = `__DownloadFiles.ps1`;
+            writeFileToServer(`${commandStr}${finalLine}`, `${YTDLP_Path}/${fileName}`);
+            openDir(YTDLP_Path, openDirWithScript);
+            res.send(scriptSuccessMessage(YTDLP_Path, fileName));
+            return
+        }
+    })
+
+let inputFilesMarked = false
+let marker = `INPUT`
+
+app.route(`/FFMPEG_GUI`)
+    .post((req, res) => {
+        mostRecentForm = `FFMPEG_GUI`
+        inputFilesMarked = false
+        marker = `INPUT`
+
+        if (req.body.OpenDir) {
+            openDir(FFMPEG_Path, true);
+            return
+        }
+
+        else if (req.body.RemoveNonASCII) {
+            removeNonASCII(FFMPEG_Path);
+            res.send(removeNonASCIISuccessMessage(FFMPEG_Path));
+            return
+        }
+
+        else if (req.body.WriteScript) {
+            // Initialization
+            const fileName = `__FFMPEG_Script.ps1`
+
+            let MarkOption = req.body.MarkOption;
+            let CustomPath = req.body.CustomPath;
+            let IncExc_Option = req.body.IncExc_Option;
+            let IncExc_Items = req.body.IncExc_Items.split(`\r\n`).filter(item => item !== '');
+            let PowerOp = req.body.PowerOp;
+            let OutputExtensions = req.body.OutputExtensions.split(`\r\n`).filter(item => item !== '');
+            let CustomBitrate = req.body.CustomBitrate;
+            let CustomFramerate = req.body.CustomFramerate;
+            let TypeOfScaling = req.body.TypeOfScaling;
+            let Preset_16x9_Dimensions = req.body.Preset_16x9_Dimensions;
+            let ScaleType = req.body.ScaleType;
+            let ScaleMultiplier = req.body.ScaleMultiplier;
+            let NumLoops = req.body.NumLoops;
+            let ReverseMedia = req.body.ReverseMedia;
+
+            let InputFileNames = req.body.InputFileNames.split(`\r\n`).filter(item => item !== '')
+            let OutputFileNames = req.body.OutputFileNames.split(`\r\n`).filter(item => item !== '');
+            let StartTimes = req.body.StartTimes.split(`\r\n`).filter(item => item !== '')
+            let EndTimes = req.body.EndTimes.split(`\r\n`).filter(item => item !== '')
+
+            let pathToUse = FFMPEG_Path
+            if (CustomPath !== ``) pathToUse = CustomPath.replaceAll(`"`, ``)
+
+            let folderItems = fs.readdirSync(pathToUse)
+
+            let commandStr = ``
+
+            // Trim Media First If Selected (Least computationally expensive)
+            if (req.body.TrimMedia) {
+
+                // Check if input lengths are equal for all text areas
+                if (InputFileNames.length !== OutputFileNames.length || InputFileNames.length !== StartTimes.length || InputFileNames.length !== EndTimes.length) {
+                    res.send(`
+                    <body style='font-family: arial; word-wrap: break-word'>
+                        <h1 style='color:red'>Invalid Input</h1>
+                        <p>The number of InputFileNames, OutputFileNames, StartTimes, and EndTimes must be the same.</p>
+                        ${ReturnToFormBtn}
+                        <pre>${JSON.stringify(req.body, null, 2)}</pre>
+                    </body>
+                    `)
+                    return
+                }
+
+                // Check if input and output names are the same, returning with an invalid input message if they are
+                for (let i = 0; i < InputFileNames.length; i++) {
+                    if (InputFileNames[i] === OutputFileNames[i]) {
+                        res.send(`
+                        <body style='font-family: arial; word-wrap: break-word'>
+                            <h1 style='color:red'>Invalid Input</h1>
+                            <p>The file's input name cannot be the same as its output name.</p>
+                            ${ReturnToFormBtn}
+                            <pre>${JSON.stringify(req.body, null, 2)}</pre>
+                        </body>
+                        `)
+                        break
+                    }
+                }
+
+                for (let i = 0; i < InputFileNames.length; i++) {
+                    commandStr += `ffmpeg -ss "${StartTimes[i]}" -to "${EndTimes[i]}" -i "${InputFileNames[i].replaceAll(`$`, `\`$`)}" -vcodec copy -acodec copy "${OutputFileNames[i].replaceAll(`$`, `\`$`)}"\n`
+                }
+
+                if (req.body.MarkOption === `MarkInput`) {
+                    for (let i = 0; i < InputFileNames.length; i++) {
+                        commandStr += `Rename-Item -LiteralPath "${InputFileNames[i].replaceAll(`$`, `\`$`)}" -NewName "_____${marker} ${InputFileNames[i].replaceAll(`$`, `\`$`)}"\n`
+                    }
+                    inputFilesMarked = true
+                }
+            }
+
+            let selectedFiles
+            if (req.body.TrimMedia && OutputFileNames.length > 0) selectedFiles = OutputFileNames
+            else selectedFiles = folderItems
+
+            // Handle modification parameters for output files
+            let modifications = ``
+
+            let loopStr = ``
+            if (req.body.LoopMedia && NumLoops !== ``) {
+                loopStr += `-stream_loop ${NumLoops}`
+            }
+
+            let vfFilters = ``
+            let afFilters = ``
+
+            if (req.body.UseCustomResolution && TypeOfScaling === `16x9`) {
+                vfFilters += `scale=${Preset_16x9_Dimensions},`
+            }
+            if (req.body.UseCustomResolution && TypeOfScaling === `CustomScaling` && ScaleMultiplier !== ``) {
+                vfFilters += `scale=iw*${ScaleMultiplier}:ih*${ScaleMultiplier}:-1:flags=${ScaleType},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse,`
+            }
+
+            // if (req.body.LoopMedia && NumLoops !== ``) {
+            //     vfFilters += `loop=${NumLoops}:1,setpts=N/FRAME_RATE/TB,`
+            // }
+            if (ReverseMedia) {
+                vfFilters += `reverse,`
+                afFilters += `areverse,`
+            }
+
+            // Remove the trailing comma from the filters if they are not empty
+            vfFilters = vfFilters.replace(/(^,)|(,$)/g, "")
+            afFilters = afFilters.replace(/(^,)|(,$)/g, "")
+
+            let vfStr = `-vf "${vfFilters}" `
+            let afStr = `-af "${afFilters}" `
+
+            if (vfFilters != ``) modifications += vfStr
+            if (afFilters != ``) modifications += afStr
+
+            if (req.body.UseCustomBitrate && CustomBitrate !== ``) modifications += `-b:v ${CustomBitrate}k -bufsize ${CustomBitrate}k `
+            if (req.body.UseCustomFramerate && CustomFramerate !== ``) modifications += `-r ${CustomFramerate} `
+
+            modifications = modifications.trim()
+
+            for (inFile of selectedFiles) {
+                if (fileFilter(inFile, fileName, IncExc_Option, IncExc_Items)) {
+                    inFile.replaceAll(`$`, `\`$`)
+
+                    let outFile
+                    // Determine output file extensions
+                    if (req.body.ConvertFileType && OutputExtensions.length > 0) {    // Use corresponding extensions in OutputExtensions
+                        let finalExt = ``
+                        for (ext of OutputExtensions) {
+                            outFile = `(OUTPUT) ${removeExt(inFile)}.${ext}`
+                            commandStr += `ffmpeg ${loopStr} -i "${inFile}" ${modifications} "${outFile}"\n`
+                            finalExt = ext
+                        }
+                        if (MarkOption !== `None`) commandStr += handleMarking(inFile, outFile, fileName, MarkOption, finalExt)
+                    } else {
+                        // Use default extensions
+                        outFile = `(OUTPUT) ${inFile}`
+                        commandStr += `ffmpeg ${loopStr} -i "${inFile}" ${modifications} "${outFile}"\n`
+
+                        if (MarkOption !== `None`) commandStr += handleMarking(inFile, fileName, MarkOption)
+                    }
+                }
+            }
+
+            // Final pass of any files not properly renamed
+            if (MarkOption !== `None`) commandStr += `
+$files = Get-ChildItem -LiteralPath "${pathToUse}" -File
+foreach ($file in $files) {
+    # Check if the file name contains '(OUTPUT)'
+    if ($file.Name -like '*(OUTPUT)*') {
+        # Remove '(OUTPUT)' from the file name
+        $newName = $file.Name -replace '\\(OUTPUT\\) ', ''
+        # Rename the file
+        Rename-Item -Path $file.FullName -NewName $newName
+    }
+}\n`;
+
+            // Finalize Script
+            commandStr += powerOp(PowerOp);
+            writeFileToServer(`${commandStr}${finalLine}`, `${pathToUse}/${fileName}`);
+            openDir(FFMPEG_Path, openDirWithScript);
+            try {
+                res.send(scriptSuccessMessage(FFMPEG_Path, fileName));
+            } catch (e) { }
+
         }
     })
 
@@ -339,4 +581,5 @@ app.listen(port, () => {
     console.log(`--------------------`);
     console.log(`CTRL + Click the URL to access ${appNameStr}: http://localhost:${port}`)
     console.log(`Keep this window open or minimized when using ${appNameStr}. Use CTRL+C to close the window and stop the server.`)
+    console.log(`--------------------`);
 });

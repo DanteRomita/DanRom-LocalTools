@@ -107,9 +107,9 @@
         Flaticon</a> -->
 
     <p>
-        <button style="font-size: x-large; background-color: darkred;" onclick="showForm('YT-DLP_GUI-FORM')">YT-DLP
+        <button style="font-size: x-large; background-color: red;" onclick="showForm('YT-DLP_GUI-FORM')">YT-DLP
             GUI</button>
-        <button style="font-size: x-large; background-color: darkgreen;" onclick="showForm('FFMPEG_GUI-FORM')">FFMPEG
+        <button style="font-size: x-large; background-color: greenyellow;" onclick="showForm('FFMPEG_GUI-FORM')">FFMPEG
             GUI</button>
     </p>
 
@@ -118,10 +118,10 @@
     <form action="/YT-DLP_GUI" method="POST" id="YT-DLP_GUI-FORM" style="display: none;">
         <fieldset>
             <legend style="color: red;">YT-DLP GUI</legend>
-            <p>
+            <div>
                 Enter all channel, playlist and video links here. <b>(One link per line)</b>
                 <textarea class="textInput" name="URLs" rows="10"></textarea>
-            </p>
+            </div>
 
             <h3>Select Content to Download (Select at least one)</h3>
 
@@ -182,13 +182,14 @@
             <label for="PowerOp_ShutDown-YT-DLP">Shut Down</label><br>
 
             <p>
-                <input style="font-size: x-large" type="submit" name="RunScript" value="📜">
+                <input style="font-size: x-large" type="submit" name="WriteScript" value="📜">
                 <input style="font-size: x-large" type="submit" name="OpenDir" value="📂">
                 <input style="font-size: x-large" type="submit" name="RemoveNonASCII" value="🔡">
             </p>
 
             <input style="font-size: large" type="submit" name="AudioAndImageToVid" value="Audio + Image To Video*">
-            <p>*Takes all mp3s and pngs in the folder and creates a video, provided each respective file exists and has the same name excluding the file extension.</p>
+            <p>*Takes all mp3s and pngs in the folder and creates a video, provided each respective file exists and has
+                the same name excluding the file extension.</p>
 
             <p>If you just want to add black image to an MP3 for the purposes of copyright checking, check the box
                 below. The <b>black.jfif</b> file will be used instead.</p>
@@ -198,12 +199,225 @@
         </fieldset>
     </form>
 
-    <form action="/ffmpeg" method="POST" id="FFMPEG_GUI-FORM" style="display: none;">
-        <!-- Form 2 content -->
+    <form action="/FFMPEG_GUI" method="POST" id="FFMPEG_GUI-FORM" style="display: none;">
         <fieldset>
-            <legend style="color: green;">FFMPEG GUI</legend>
-            <input type="text" placeholder="Input 2">
-            <button type="submit">Submit</button>
+            <legend style="color: greenyellow;">FFMPEG GUI</legend>
+
+            <!-- START OF GENERAL CONFIGURATIONS -->
+
+            <div style="font-size: large; font-weight: bold;">Marking Options</div>
+
+            <p>
+                <input type="radio" id="MarkOption1" name="MarkOption" value="None" checked>
+                <label for="MarkOption1">None</label><br>
+                <input type="radio" id="MarkOption2" name="MarkOption" value="MarkLarger">
+                <label for="MarkOption2">Mark Larger Files When Finished</label><br>
+                <input type="radio" id="MarkOption3" name="MarkOption" value="MarkInput">
+                <label for="MarkOption3">Mark Input Files When Finished</label>
+            </p>
+            <p style="color:orange">
+                <b>WARNING! </b>Options other than "None" will rename your files!
+            </p>
+            <h3>Custom Path Option</h3>
+
+            <p>
+                To use a custom path, enter the <b>absolute</b> path of the folder below:
+                <input class="textInput" name="CustomPath">
+            </p>
+
+            <p>
+                Otherwise, if the field above is left blank, generate the script <b>AFTER</b> placing the video files in
+                the <b>placeholder</b> folder within the root of the project.
+            </p>
+
+            <h3>Include/Exclude Options</h3>
+            <p style="color:purple">If trimming media, these include/exclude options will be ignored entirely.</p>
+            <p>
+                <input type="radio" id="IncExc_Option1" name="IncExc_Option" value="All" checked>
+                <label for="IncExc_Option1">All Items In Folder</label><br>
+                <input type="radio" id="IncExc_Option2" name="IncExc_Option" value="Include">
+                <label for="IncExc_Option2">Include Only Set Items</label><br>
+                <input type="radio" id="IncExc_Option3" name="IncExc_Option" value="Exclude">
+                <label for="IncExc_Option3">Exclude Only Set Items</label>
+            </p>
+
+            <p>
+                Enter the <b>full names of all files WITH file extensions</b> to included/excluded below. Selecting
+                <b>All Items In Folder</b> will ignore this input and default to including all with file extensions in
+                the chosen folder.
+                <textarea class="textInput" name="IncExc_Items" rows="6"></textarea>
+            </p>
+
+            <h3>Power Options When Complete</h3>
+
+            <p>
+                <input type="radio" name="PowerOp" id="PowerOp_None" value="None" checked>
+                <label for="PowerOp_None">None</label><br>
+                <input type="radio" name="PowerOp" id="PowerOp_Hibernate" value="Hibernate">
+                <label for="PowerOp_Hibernate">Hibernate</label><br>
+                <input type="radio" name="PowerOp" id="PowerOp_ShutDown" value="Shut Down">
+                <label for="PowerOp_ShutDown">Shut Down</label>
+            </p>
+            <hr>
+            <p>For the following sections below, check the boxes if you want to include the corresponding option. If an
+                option's checkbox is not checked, it will not be used. <b>The default functionality assumed is an input
+                    an output of the same file type.</b></p>
+
+            <fieldset>
+                <input type="checkbox" name="TrimMedia" id="TrimMedia">
+                <label for="TrimMedia">Trim Media?</label>
+
+                <p>
+                    For all inputs below, ensure that they are separated by a <b>line break</b> and that each desired
+                    input
+                    is mapped correctly.<br>
+                    (Ex. Line 1 of each input will be mapped to the first command in the <b>!trimMedia.ps1</b> script
+                    file)
+                </p>
+                <hr>
+                <p>
+                    Enter the names of the input files <b>including file extensions</b> below:<br>
+                    (Note: The file extensions for the input and output files must be the same for this step to
+                    work.)<br>
+                    <textarea class="textInput" name="InputFileNames" rows="6"></textarea>
+                </p>
+                <p>
+                    Enter the desired names of the output files <b>including file extensions</b> below:<br>
+                    <textarea class="textInput" name="OutputFileNames" rows="6"></textarea>
+                </p>
+
+                <hr>
+
+                <p>
+                    Enter start and end times in one of the two formats below:
+                <ul>
+                    <li>HOURS:MM:SS.MILLISECONDS</li>
+                    <li>HOURS:MM:SS</li>
+                </ul>
+                </p>
+
+                <p>
+                    Enter start times:<br>
+                    <textarea class="textInput" name="StartTimes" rows="6"></textarea>
+                </p>
+
+                <p>
+                    Enter end times:<br>
+                    <textarea class="textInput" name="EndTimes" rows="6"></textarea>
+                </p>
+            </fieldset>
+
+            <fieldset>
+                <input type="checkbox" name="ConvertFileType" id="ConvertFileType">
+                <label for="ConvertFileType">Convert File Type?</label>
+
+                <p>
+                    Enter all desired output file extensions separated by a <b>line break</b> below:
+                    <textarea class="textInput" name="OutputExtensions" rows="3"></textarea>
+                </p>
+            </fieldset>
+
+            <fieldset>
+                <input type="checkbox" name="UseCustomBitrate" id="UseCustomBitrate">
+                <label for="UseCustomBitrate">Custom Bitrate?</label>
+
+                <p>
+                    <input type="number" min="0" name="CustomBitrate"> kbps
+                </p>
+            </fieldset>
+
+            <fieldset>
+                <input type="checkbox" name="UseCustomFramerate" id="UseCustomFramerate">
+                <label for="UseCustomFramerate">Custom Framerate?</label>
+
+                <p>
+                    <input type="number" min="0" name="CustomFramerate"> FPS
+                </p>
+            </fieldset>
+
+            <fieldset>
+                <input type="checkbox" name="UseCustomResolution" id="UseCustomResolution">
+                <label for="UseCustomResolution">Custom Resolution?</label>
+
+                <fieldset>
+                    <p>
+                        <input type="radio" name="TypeOfScaling" id="16x9_AspectRatios" value="16x9" checked>
+                        <label for="16x9_AspectRatios">Use 16x9 Aspect Ratio For Down-Scaling: </label>
+
+                        <select name="Preset_16x9_Dimensions">
+                            <option value="1920:1080">1920 x 1080 (1080p)</option>
+                            <option value="1280:720">1280 x 720 (720p)</option>
+                            <option value="640:360">640 x 360 (360p)</option>
+                            <option value="512:288">512 x 288 (288p)</option>
+                            <option value="384:216">384 x 216 (216p)</option>
+                            <option value="256:144">256 x 144 (144p)</option>
+                        </select>
+                    </p>
+
+                </fieldset>
+
+                <fieldset>
+                    <p>
+                        <input type="radio" name="TypeOfScaling" id="CustomScaling" value="CustomScaling">
+                        <label for="CustomScaling">Use Custom Scaling</label>
+                    </p>
+                    <p>
+                        Select the scaling algorithm you prefer:
+
+                        <select name="ScaleType">
+                            <option value="fast_bilinear">fast_bilinear</option>
+                            <option value="bilinear">bilinear</option>
+                            <option value="bicubic">bicubic</option>
+                            <option value="experimental">experimental</option>
+                            <option value="neighbor">neighbor</option>
+                            <option value="area">area</option>
+                            <option value="bicublin">bicublin</option>
+                            <option value="gauss">gauss</option>
+                            <option value="sinc">sinc</option>
+                            <option value="lanczos">lanczos</option>
+                            <option value="spline">spline</option>
+                            <option value="print_info">print_info</option>
+                            <option value="accurate_rnd">accurate_rnd</option>
+                            <option value="full_chroma_int">full_chroma_int</option>
+                            <option value="full_chroma_inp">full_chroma_inp</option>
+                            <option value="bitexact">bitexact</option>
+                            <option value="error_diffusion">error_diffusion</option>
+                        </select>
+                    </p>
+
+                    <p>
+                        Enter your desired multiplier of the scaled media.
+                        <input type="number" class="textInput" step="any" name="ScaleMultiplier" min="0">
+                    </p>
+                </fieldset>
+                </p>
+            </fieldset>
+
+            <fieldset>
+                <input type="checkbox" name="LoopMedia" id="LoopMedia">
+                <label for="LoopMedia">Loop Media?</label>
+
+                <p>
+                    Enter the total number of <b>additional</b> times you would like the media to be looped. (Ex. 1 loop is 2 times.)
+                    <br><input type="number" class="textInput" name="NumLoops" min="1">
+                </p>
+            </fieldset>
+
+            <fieldset>
+                <input type="checkbox" name="ReverseMedia" id="ReverseMedia">
+                <label for="ReverseMedia">Reverse Media?</label>
+            </fieldset>
+
+            <!-- <fieldset>
+                <input type="checkbox" name="NormalizeAudio" id="NormalizeAudio">
+                <label for="NormalizeAudio">Normalize Audio?</label>
+            </fieldset> -->
+
+            <p>
+                <input style="font-size: x-large" type="submit" name="WriteScript" value="📜">
+                <input style="font-size: x-large" type="submit" name="OpenDir" value="📂">
+                <input style="font-size: x-large" type="submit" name="RemoveNonASCII" value="🔡">
+            </p>
         </fieldset>
     </form>
 
