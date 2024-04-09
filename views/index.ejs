@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" href="../images/favicon.png">
+    <title>DanRom LocalTools</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.min.js"></script>
+    <script type="text/javascript">
+        var app = angular.module('myApp', []);
+    </script>
+
+    <!-- START OF GENERAL CSS -->
+    <style>
+        input {
+            font-size: medium;
+        }
+
+        select {
+            font-size: large;
+        }
+
+        textarea {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+
+            resize: vertical;
+            width: 100%;
+        }
+
+        .textInput {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+
+            width: 100%;
+        }
+
+        legend {
+            font-size: large;
+        }
+    </style>
+    <!-- END OF GENERAL CSS-->
+
+    <!-- START OF BACK TO TOP BUTTON -->
+
+    <script>
+        // (A) SMOOTH SCROLL TO TOP
+        function totop() {
+            window.scroll({
+                top: 0, left: 0, behavior: "smooth"
+            });
+        }
+
+        // // (B) SHOW/HIDE BUTTON
+        function togtop() {
+            if (window.scrollY >= 100) {
+                document.getElementById("backtop").classList.add("show");
+            } else {
+                document.getElementById("backtop").classList.remove("show");
+            }
+        }
+        window.addEventListener("scroll", togtop);
+        window.addEventListener("resize", togtop);
+    </script>
+
+    <style>
+        #backtop {
+            /* (A) BOTTOM RIGHT CORNER */
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+
+            /* (B) HIDDEN BY DEFAULT */
+            visibility: none;
+            opacity: 0;
+
+            /* (C) COSMETICS */
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        /* (D) SHOW BUTTON */
+        #backtop.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* (X) DOES NOT MATTER */
+        * {
+            font-family: arial, sans-serif;
+            box-sizing: border-box;
+        }
+    </style>
+
+    <!-- END OF BACK TO TOP BUTTON -->
+
+<body ng-app="myApp" style="font-family: arial;" style="word-wrap: break-word;">
+    <!-- <h3>DanRom LocalTools</h3> -->
+    <!-- <a href="https://www.flaticon.com/free-icons/wrench" title="wrench icons">Wrench icons created by Freepik -
+        Flaticon</a> -->
+
+    <p>
+        <button style="font-size: x-large; background-color: darkred;" onclick="showForm('YT-DLP_GUI-FORM')">YT-DLP
+            GUI</button>
+        <button style="font-size: x-large; background-color: darkgreen;" onclick="showForm('FFMPEG_GUI-FORM')">FFMPEG
+            GUI</button>
+    </p>
+
+    <p>📜 = Create Script | 📂 = Open Folder | 🔡 = Remove Non-ASCII Characters in Folder</p>
+
+    <form action="/YT-DLP_GUI" method="POST" id="YT-DLP_GUI-FORM" style="display: none;">
+        <fieldset>
+            <legend style="color: red;">YT-DLP GUI</legend>
+            <p>
+                Enter all channel, playlist and video links here. <b>(One link per line)</b>
+                <textarea class="textInput" name="URLs" rows="10"></textarea>
+            </p>
+
+            <h3>Select Content to Download (Select at least one)</h3>
+
+            <input type="checkbox" name="Video" id="Video">
+            <label for="Video">Video (.mp4)</label>
+            <br>
+            <input type="checkbox" name="Audio" id="Audio">
+            <label for="Audio">Audio (.mp3)</label>
+            <br>
+            <input type="checkbox" name="Thumbnail" id="Thumbnail">
+            <label for="Thumbnail">Thumbnail (.png)</label>
+            <br>
+            <input type="checkbox" name="Subtitles" id="Subtitles">
+            <label for="Subtitles">Subtitles (.vtt)</label>
+            <br>
+            <input type="checkbox" name="Comments" id="Comments">
+            <label for="Comments">Comments (.json)</label>
+
+            <h3>Set Video Resolution</h3>
+
+            <p><b>NOTES: </b>
+            <ul>
+                <li>
+                    The below dropdown will be ignored if <i>Video</i> isn't selected.
+                </li>
+                <li>
+                    The video FPS should be taken care of automatically if the supported resolutions are selected.
+                </li>
+            </ul>
+
+            </p>
+
+            <select name="VideoResolution">
+                <option value="Best">Best</option>
+                <option value="4320">8K (4320p)</option>
+                <option value="2160">4K (2160p)</option>
+                <option value="1440">1440p</option>
+                <option value="1080">1080p</option>
+                <option value="720">720p</option>
+                <option value="480">480p</option>
+                <option value="360">360p</option>
+                <option value="240">240p</option>
+                <option value="144">144p</option>
+            </select>
+
+            <h3>Misc. Settings</h3>
+
+            <input type="checkbox" name="Channel" id="Channel">
+            <label for="Channel">Include Channel Name in File</label>
+
+            <h3>Power Options When Complete</h3>
+
+            <input type="radio" name="PowerOp" id="PowerOp_None-YT-DLP" value="None" checked>
+            <label for="PowerOp_None-YT-DLP">None</label><br>
+            <input type="radio" name="PowerOp" id="PowerOp_Hibernate-YT-DLP" value="Hibernate">
+            <label for="PowerOp_Hibernate-YT-DLP">Hibernate</label><br>
+            <input type="radio" name="PowerOp" id="PowerOp_ShutDown-YT-DLP" value="Shut Down">
+            <label for="PowerOp_ShutDown-YT-DLP">Shut Down</label><br>
+
+            <p>
+                <input style="font-size: 18pt" type="submit" name="RunScript" value="📜">
+                <input style="font-size: 18pt" type="submit" name="OpenDir" value="📂">
+                <input style="font-size: 18pt" type="submit" name="RemoveNonASCII" value="🔠">
+            </p>
+        </fieldset>
+    </form>
+
+    <form action="/ffmpeg" method="POST" id="FFMPEG_GUI-FORM" style="display: none;">
+        <!-- Form 2 content -->
+        <fieldset>
+            <legend style="color: green;">FFMPEG GUI</legend>
+            <input type="text" placeholder="Input 2">
+            <button type="submit">Submit</button>
+        </fieldset>
+    </form>
+
+    <img src="../images/up-button.png" id="backtop" onclick="totop()" />
+
+    <script>
+        // --- START OF ROUTING ---
+        function showForm(formId) {
+            var allForms = document.querySelectorAll('form');
+            allForms.forEach(form => form.style.display = 'none');
+
+            var formToShow = document.getElementById(formId);
+            if (formToShow) formToShow.style.display = 'block';
+            else console.error("Element with ID " + formId + " not found.");
+        }
+        // --- END OF ROUTING ---
+    </script>
+
+    <% if (mostRecentForm=="YT-DLP_GUI" ) { %>
+        <script>showForm('YT-DLP_GUI-FORM')</script>
+        <% } else if (mostRecentForm==="FFMPEG_GUI" ) { %>
+            <script>showForm('FFMPEG_GUI-FORM')</script>
+            <% } %>
+</body>
+
+</html>
