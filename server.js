@@ -300,23 +300,17 @@ app.route(`/YT-DLP_GUI`)
 
         let Channel = req.body.Channel
 
-        // Check if form is complete
-        if (!URLs || !YTDLP_Path || (!Video && !Audio && !Thumbnail && !Subtitles && !Comments)) {
-            res.send(incompleteForm(req));
-            return
-        }
-
         // Opens the YT-DLP folder
-        else if (req.body.OpenDir) {
+        if (req.body.OpenDir) {
             openDir(YTDLP_Path, true);
-            return
+            return;
         }
 
         // Removes non-ASCII characters in the YT-DLP folder
         else if (req.body.RemoveNonASCII) {
             removeNonASCII(YTDLP_Path);
             res.send(removeNonASCIISuccessMessage(YTDLP_Path));
-            return
+            return;
         }
 
         // Creates the AudioAndImageToVid.ps1 script
@@ -340,11 +334,17 @@ app.route(`/YT-DLP_GUI`)
             writeFileToServer(`${commandStr}${finalLine}`, `${YTDLP_Path}/${fileName}`);
             openDir(YTDLP_Path, openDirWithScript);
             res.send(scriptSuccessMessage(YTDLP_Path, fileName));
-            return
+            return;
+        }
+
+        // Check if form is complete
+        else if (!URLs || !YTDLP_Path || (!Video && !Audio && !Thumbnail && !Subtitles && !Comments)) {
+            res.send(incompleteForm(req));
+            return;
         }
 
         // Creates the main YT-DLP script titled "__DownloadFiles.ps1"
-        else if (!req.body.OpenDir && !req.body.RemoveNonASCII && !req.body.AudioAndImageToVid) {
+        else if (req.body.WriteScript) {
             let commandStr = ``;
             let baseStr = `./${YTDLP_Path} -o '`;
             if (Channel) baseStr += `%(uploader)s - `;

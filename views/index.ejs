@@ -33,6 +33,10 @@
             width: 100%;
         }
 
+        legend {
+            font-size: large;
+        }
+
         .textInput {
             -webkit-box-sizing: border-box;
             -moz-box-sizing: border-box;
@@ -41,8 +45,9 @@
             width: 100%;
         }
 
-        legend {
+        .routingButton {
             font-size: large;
+            margin-bottom: 4px;
         }
     </style>
     <!-- END OF GENERAL CSS-->
@@ -106,18 +111,37 @@
     <!-- <a href="https://www.flaticon.com/free-icons/wrench" title="wrench icons">Wrench icons created by Freepik -
         Flaticon</a> -->
 
-    <p>
-        <button style="font-size: x-large; background-color: red;" onclick="showForm('YT-DLP_GUI-FORM')">YT-DLP
-            GUI</button>
-        <button style="font-size: x-large; background-color: greenyellow;" onclick="showForm('FFMPEG_GUI-FORM')">FFMPEG
-            GUI</button>
-    </p>
+        <p>
+            <button class="routingButton" style="background-color: red;" onclick="showForm('YT-DLP_GUI-FORM')">YT-DLP GUI</button>
+            <button class="routingButton" style="background-color: greenyellow;" onclick="showForm('FFMPEG_GUI-FORM')">FFMPEG GUI</button>
+            <button class="routingButton" onclick="showForm('FileName_UrlConverter-FORM')">File Name ↔ URL Converter</button>
+            <button class="routingButton" onclick="showForm('RemoveNonASCII-FORM')">Remove Non-ASCII</button>
+            <button class="routingButton" onclick="showForm('URL_Cleaner-FORM')">URL Cleaner</button>
+            <button class="routingButton" onclick="showForm('ChangeLetterCase-FORM')">Change Letter Case</button>
+            <button class="routingButton" onclick="showForm('RemoveLineBreaks-FORM')">Remove Line Breaks</button>
+            <button class="routingButton" onclick="showForm('Listify-FORM')">Listify</button>
+            <button class="routingButton" onclick="showForm('ListFilesInFolder-FORM')">List Files In Folder</button>
+        </p>
 
     <p>📜 = Create Script | 📂 = Open Folder | 🔡 = Remove Non-ASCII Characters in Folder</p>
 
     <form action="/YT-DLP_GUI" method="POST" id="YT-DLP_GUI-FORM" style="display: none;">
         <fieldset>
             <legend style="color: red;">YT-DLP GUI</legend>
+
+            <input style="font-size: x-large" type="submit" name="WriteScript" value="📜">
+            <input style="font-size: x-large" type="submit" name="OpenDir" value="📂">
+            <input style="font-size: x-large" type="submit" name="RemoveNonASCII" value="🔡">
+
+            <p>
+                <input style="font-size: large" type="submit" name="AudioAndImageToVid" value="Audio + Image To Video*">
+            </p>
+            <p>*Takes all mp3s and pngs in the folder and creates a video, provided each respective file exists and has
+                the same name excluding the file extension.</p>
+
+            <p>If you just want to add black image to an MP3 for the purposes of copyright checking, check the box
+                at the bottom. The <b>black.jfif</b> file will be used instead.</p>
+            <hr>
             <div>
                 Enter all channel, playlist and video links here. <b>(One link per line)</b>
                 <textarea class="textInput" name="URLs" rows="10"></textarea>
@@ -191,8 +215,9 @@
             <p>*Takes all mp3s and pngs in the folder and creates a video, provided each respective file exists and has
                 the same name excluding the file extension.</p>
 
-            <p>If you just want to add black image to an MP3 for the purposes of copyright checking, check the box
-                below. The <b>black.jfif</b> file will be used instead.</p>
+            <p>
+                If you just want to add black image to an MP3 for the purposes of copyright checking, check the box
+                at the bottom. The <b>black.jfif</b> file will be used instead.</p>
 
             <input type="checkbox" name="UseBlack" id="AudioImageToMP4_UseBlack">
             <label for="AudioImageToMP4_UseBlack">Use Black Image Instead</label>
@@ -203,9 +228,13 @@
         <fieldset>
             <legend style="color: greenyellow;">FFMPEG GUI</legend>
 
+            <input style="font-size: x-large" type="submit" name="WriteScript" value="📜">
+            <input style="font-size: x-large" type="submit" name="OpenDir" value="📂">
+            <input style="font-size: x-large" type="submit" name="RemoveNonASCII" value="🔡">
+
             <!-- START OF GENERAL CONFIGURATIONS -->
 
-            <div style="font-size: large; font-weight: bold;">Marking Options</div>
+            <h3>Marking Options</h3>
 
             <p>
                 <input type="radio" id="MarkOption1" name="MarkOption" value="None" checked>
