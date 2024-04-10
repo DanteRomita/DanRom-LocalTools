@@ -398,7 +398,8 @@
                 <label for="LoopMedia">Loop Media?</label>
 
                 <p>
-                    Enter the total number of <b>additional</b> times you would like the media to be looped. (Ex. 1 loop is 2 times.)
+                    Enter the total number of <b>additional</b> times you would like the media to be looped. (Ex. 1 loop
+                    is 2 times.)
                     <br><input type="number" class="textInput" name="NumLoops" min="1">
                 </p>
             </fieldset>
@@ -425,17 +426,24 @@
             allForms.forEach(form => form.style.display = 'none');
 
             var formToShow = document.getElementById(formId);
-            if (formToShow) formToShow.style.display = 'block';
-            else console.error("Element with ID " + formId + " not found.");
+            if (formToShow) {
+                formToShow.style.display = 'block';
+                localStorage.setItem('mostRecentForm', formId);
+            } else {
+                console.error("Element with ID " + formId + " not found.");
+            }
         }
+
+        let mostRecentForm;
+        if (localStorage.getItem('mostRecentForm')) {
+            mostRecentForm = localStorage.getItem('mostRecentForm');
+        } else {
+            mostRecentForm = '';
+        }
+        showForm(mostRecentForm);
+
         // --- END OF ROUTING ---
     </script>
-
-    <% if (mostRecentForm=="YT-DLP_GUI" ) { %>
-        <script>showForm('YT-DLP_GUI-FORM')</script>
-        <% } else if (mostRecentForm==="FFMPEG_GUI" ) { %>
-            <script>showForm('FFMPEG_GUI-FORM')</script>
-            <% } %>
 </body>
 
 </html>

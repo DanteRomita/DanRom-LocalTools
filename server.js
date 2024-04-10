@@ -112,7 +112,7 @@ const dirPathsToMake = [
 
 for (dirPath of dirPathsToMake) makeDir(dirPath)
 
-const ReturnToFormBtn = `<p><button style='font-size: large' onclick=window.history.back()='/'>Return to Form</button></p>`
+const ReturnToFormBtn = `<p><button style='font-size: large' onclick="window.history.back();">Return to Form</button></p>`
 function scriptSuccessMessage(path, fileName) {
     return `
     <body style='font-family: arial; word-wrap: break-word'>
@@ -258,7 +258,6 @@ function handleMarking(inFile, outFile, fileName, MarkOption, ext) {
 //--BEGINNING OF GLOBAL OPTION VARIABLE INITIALIZATIONS--//
 
 let openDirWithScript = `No`
-let mostRecentForm = ``
 
 //--END OF GLOBAL OPTION VARIABLE INITIALIZATIONS--//
 
@@ -269,7 +268,6 @@ app.route(`/*`)
         res.render(`index`, {
             // Global Options
             openDirWithScript: openDirWithScript,
-            mostRecentForm: mostRecentForm,
 
             // Path Values
             YTDLP_Path: YTDLP_Path,
@@ -289,7 +287,6 @@ app.route(`/*`)
 
 app.route(`/YT-DLP_GUI`)
     .post((req, res) => {
-        mostRecentForm = `YT-DLP_GUI`
 
         let URLs = req.body.URLs.split(`\r\n`)
 
@@ -389,7 +386,6 @@ let marker = `INPUT`
 
 app.route(`/FFMPEG_GUI`)
     .post((req, res) => {
-        mostRecentForm = `FFMPEG_GUI`
         inputFilesMarked = false
         marker = `INPUT`
 
