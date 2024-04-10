@@ -389,8 +389,12 @@ app.route(`/FFMPEG_GUI`)
         inputFilesMarked = false
         marker = `INPUT`
 
+        let CustomPath = req.body.CustomPath;
+        let pathToUse = FFMPEG_Path
+        if (CustomPath !== ``) pathToUse = CustomPath.replaceAll(`"`, ``)
+
         if (req.body.OpenDir) {
-            openDir(FFMPEG_Path, true);
+            openDir(pathToUse, true);
             return
         }
 
@@ -405,7 +409,6 @@ app.route(`/FFMPEG_GUI`)
             const fileName = `__FFMPEG_Script.ps1`
 
             let MarkOption = req.body.MarkOption;
-            let CustomPath = req.body.CustomPath;
             let IncExc_Option = req.body.IncExc_Option;
             let IncExc_Items = req.body.IncExc_Items.split(`\r\n`).filter(item => item !== '');
             let PowerOp = req.body.PowerOp;
@@ -423,9 +426,6 @@ app.route(`/FFMPEG_GUI`)
             let OutputFileNames = req.body.OutputFileNames.split(`\r\n`).filter(item => item !== '');
             let StartTimes = req.body.StartTimes.split(`\r\n`).filter(item => item !== '')
             let EndTimes = req.body.EndTimes.split(`\r\n`).filter(item => item !== '')
-
-            let pathToUse = FFMPEG_Path
-            if (CustomPath !== ``) pathToUse = CustomPath.replaceAll(`"`, ``)
 
             let folderItems = fs.readdirSync(pathToUse)
 
