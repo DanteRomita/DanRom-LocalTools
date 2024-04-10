@@ -247,7 +247,6 @@ function handleMarkInput(inFile, outFile, fileName, ext) {
 }
 
 function handleMarking(inFile, outFile, fileName, MarkOption, ext) {
-    console.log(`MarkOption: ${MarkOption}`)
     let markingCommands = ``
     if (MarkOption === `MarkLarger`) markingCommands = handleMarkLarger(inFile, outFile, fileName, ext)
     if (MarkOption === `MarkInput`) markingCommands = handleMarkInput(inFile, outFile, fileName, ext)
@@ -492,7 +491,7 @@ app.route(`/FFMPEG_GUI`)
             }
 
             let vfFilters = ``
-            let afFilters = ``
+            let afFilters = `loudnorm,`
 
             if (req.body.UseCustomResolution && TypeOfScaling === `16x9`) {
                 vfFilters += `scale=${Preset_16x9_Dimensions},`
@@ -501,9 +500,6 @@ app.route(`/FFMPEG_GUI`)
                 vfFilters += `scale=iw*${ScaleMultiplier}:ih*${ScaleMultiplier}:-1:flags=${ScaleType},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse,`
             }
 
-            // if (req.body.LoopMedia && NumLoops !== ``) {
-            //     vfFilters += `loop=${NumLoops}:1,setpts=N/FRAME_RATE/TB,`
-            // }
             if (ReverseMedia) {
                 vfFilters += `reverse,`
                 afFilters += `areverse,`
@@ -517,7 +513,8 @@ app.route(`/FFMPEG_GUI`)
             let afStr = `-af "${afFilters}" `
 
             if (vfFilters != ``) modifications += vfStr
-            if (afFilters != ``) modifications += afStr
+            // Always add -af loudnorm, and only add areverse if ReverseMedia is true
+            modifications += afStr
 
             if (req.body.UseCustomBitrate && CustomBitrate !== ``) modifications += `-b:v ${CustomBitrate}k -bufsize ${CustomBitrate}k `
             if (req.body.UseCustomFramerate && CustomFramerate !== ``) modifications += `-r ${CustomFramerate} `
@@ -567,7 +564,7 @@ foreach ($file in $files) {
             openDir(FFMPEG_Path, openDirWithScript);
             try {
                 res.send(scriptSuccessMessage(FFMPEG_Path, fileName));
-            } catch (e) { }
+            } catch { }
 
         }
     })
