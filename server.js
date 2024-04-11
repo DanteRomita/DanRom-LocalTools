@@ -776,6 +776,41 @@ app.route(`/RemoveNonASCII`).post((req, res) => {
     </body>`)
 })
 
+app.route(`/UrlCleaner`).post((req, res) => {
+    if (!req.body.URLtoClean) { res.send(incompleteForm(req)); return }
+
+    let URLtoClean = req.body.URLtoClean
+    URLtoClean = URLtoClean.replace(`www.`, ``)
+    URLtoClean = URLtoClean.split(`?`)[0]
+
+    if (URLtoClean.substr(URLtoClean.length - 1) === `/`) URLtoClean = URLtoClean.slice(0, -1)
+
+    let newURL = ``
+    switch (req.body.UrlType) {
+        case `Article`:
+            newURL = URLtoClean.split(`#:!:text=`)[0]
+        case `Tumblr`:
+            // URLtoClean = URLtoClean.replace(`at.tumblr.com`, `tumblr.com`)
+
+            let splitURL = URLtoClean.split(`/`)
+            newURL = ``
+            if (!/^[\u0030-\u0039]*$/.test(splitURL[splitURL.length - 1])) {
+                // If non-numeric character exists in last part of URL, then...
+                splitURL.pop()
+                for (part of splitURL) newURL += `${part}/`
+                newURL = newURL.slice(0, -1)    // Removes final slash
+            } else newURL = URLtoClean
+        default:
+            newURL = URLtoClean
+            break;
+    }
+    res.send(`<body style='font-family: arial; word-wrap: break-word'>
+    <h1 style='color:green'>URL Cleaned!</h1>
+    <a href="${newURL}">${newURL}</a>
+    ${ReturnToFormBtn}
+    </body>`)
+})
+
 app.route(`/*`).get((req, res) => { res.redirect(`/`) })
 
 //---END OF ROUTING---//

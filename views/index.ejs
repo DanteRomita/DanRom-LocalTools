@@ -124,7 +124,7 @@
         <button class="routingButton" onclick="showForm('FileName_UrlConverter-FORM')">File Name ↔ URL
             Converter</button>
         <button class="routingButton" onclick="showForm('RemoveNonASCII-FORM')">Remove Non-ASCII</button>
-        <button class="routingButton" onclick="showForm('URL_Cleaner-FORM')">URL Cleaner</button>
+        <button class="routingButton" onclick="showForm('UrlCleaner-FORM')">URL Cleaner</button>
         <button class="routingButton" onclick="showForm('ChangeLetterCase-FORM')">Change Letter Case</button>
         <button class="routingButton" onclick="showForm('Listify-FORM')">Listify</button>
         <button class="routingButton" onclick="showForm('ListFilesInFolder-FORM')">List Files In Folder</button>
@@ -263,7 +263,9 @@
 
             <p>
                 Otherwise, if the field above is left blank, generate the script <b>AFTER</b> placing the video files in
-                the <b><%= FFMPEG_Path %></b> folder in the root of the project.
+                the <b>
+                    <%= FFMPEG_Path %>
+                </b> folder in the root of the project.
             </p>
 
             <h3>Include/Exclude Options</h3>
@@ -527,12 +529,14 @@
             <p>
                 <b style="color: orangered">Reddit:</b>
                 Subreddit name, ID and post name matter in the file name.
-                <i style="color: orangered">Also, the ID in the format below refers to the POST ID, not the image ID when
+                <i style="color: orangered">Also, the ID in the format below refers to the POST ID, not the image ID
+                    when
                     downloading an image from Reddit.
                     This design is intentional as it's the easiest way to identify the image author!</i>
             <ul>
                 <li>
-                    <b>Reddit File Name Format: </b><b style="color: orangered">Subreddit</b>-<b style="color: orangered">ID</b>-<b style="color: orangered">PostName</b></b>-WhateverElse
+                    <b>Reddit File Name Format: </b><b style="color: orangered">Subreddit</b>-<b
+                        style="color: orangered">ID</b>-<b style="color: orangered">PostName</b></b>-WhateverElse
                 </li>
             </ul>
             </p>
@@ -639,6 +643,32 @@
             </p>
             <input style="font-size: 18pt" type="submit" value="Rename Files">
 
+        </fieldset>
+    </form>
+
+    <form id="UrlCleaner-FORM" action="/UrlCleaner" method="POST">
+        <fieldset>
+            <legend>URL Cleaner</legend>
+            Enter the URL to clean below:
+            <input class="textInput" name="URLtoClean">
+
+            <p>
+                Select the type of URL you want to clean:
+                <select name = "UrlType">
+                    <option value="Article">Article</option>
+                    <option value="Twitter">Twitter</option>
+                    <option value="Tumblr">Tumblr</option>
+                    <option value="Instagram">Instagram</option>
+                </select>
+            </p>
+            
+            <p>
+                Check out <a
+                    href="https://www.allthescience.org/what-is-a-research-article.htm#:~:text=A%20research%20article%20is%20a%20written%20paper%20that,a%20general%20scope%20as%20a%20means%20of%20introduction.">this
+                    example</a> to see what a long article URL looks like.
+            </p>
+
+            <input style="font-size: 18pt" type="submit" value="Submit">
         </fieldset>
     </form>
 
