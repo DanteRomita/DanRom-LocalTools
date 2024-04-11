@@ -116,7 +116,8 @@
     <!-- <a href="https://www.flaticon.com/free-icons/wrench" title="wrench icons">Wrench icons created by Freepik -
         Flaticon</a> -->
 
-    <p>
+    <fieldset>
+        <legend>DanRom LocalTools</legend>
         <button class="routingButton" style="background-color: red;" onclick="showForm('YT-DLP_GUI-FORM')">YT-DLP
             GUI</button>
         <button class="routingButton" style="background-color: green;" onclick="showForm('FFMPEG_GUI-FORM')">FFMPEG
@@ -130,7 +131,7 @@
         <button class="routingButton" onclick="showForm('ChangeLetterCase-FORM')">Change Letter Case</button>
         <button class="routingButton" onclick="showForm('Listify-FORM')">Listify</button>
         <button class="routingButton" onclick="showForm('ListFilesInFolder-FORM')">List Files In Folder</button>
-    </p>
+    </fieldset>
 
     <p>📜 = Create Script | 📂 = Open Folder | 🔡 = Remove Non-ASCII Characters in Folder</p>
 
@@ -459,7 +460,7 @@
         <fieldset>
             <legend>Remove Line Breaks</legend>
             <input style="font-size: x-large" type="submit" value="Submit">
-            <textarea name="TextToChange" rows="30"></textarea>
+            <textarea name="TextToChange" rows="50"></textarea>
             <input style="font-size: x-large" type="submit" value="Submit">
         </fieldset>
     </form>
@@ -543,7 +544,7 @@
                 Only IDs matter, which must occur in the very beginning, followed by an underscore (_).
             <ul>
                 <li>
-                    <b>Pixiv File Name Format: </b><b style="color: dodgerblue">ID</b>_AccountName-WhateverElse
+                    <b>Pixiv File Name Format: </b><b style="color: dodgerblue">ID</b>_AccountName_WhateverElse
                 </li>
             </ul>
             </p>
@@ -595,7 +596,7 @@
 
             <p><b style="font-size: large;">Select Platform: </b>
                 <select name="Platform">
-                    <option value="Twitter">Twitter</option>
+                    <option value="Twitter">Twitter / X</option>
                     <option value="Tumblr">Tumblr</option>
                     <option value="Bluesky">Bluesky</option>
                     <option value="Threads">Threads</option>
