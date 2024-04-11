@@ -867,6 +867,18 @@ app.route(`/ChangeLetterCase`).post((req, res) => {
     </body>`)
 })
 
+app.route(`/Listify`).post((req, res) => {
+    if (!req.body.TextToListify) { res.send(incompleteForm(req)); return }
+
+    let TextToListify = req.body.TextToListify.replace(/\s+/g, ' ')
+    let delimiter = req.body.Delimiter
+    TextToListify = `- ${TextToListify.replaceAll(delimiter, `<br>- `)}`
+    res.send(`<body style='font-family: arial; word-wrap: break-word'>
+    ${ReturnToFormBtn}
+    <fieldset>${TextToListify}</fieldset>
+    </body>`)
+})
+
 app.route(`/*`).get((req, res) => { res.redirect(`/`) })
 
 //---END OF ROUTING---//

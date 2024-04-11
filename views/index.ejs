@@ -675,10 +675,8 @@
     <form id="ChangeLetterCase-FORM" action="/ChangeLetterCase" method="POST">
         <fieldset>
             <legend>Change Letter Case</legend>
-            <p>
                 Enter Text To Change:
                 <textarea name="TextToChange" rows="5" ng-model="textToChange"></textarea>
-            </p>
             <fieldset>
                 <h3>Upper Case</h3>
                 <p>{{textToChange.toUpperCase()}}</p>
@@ -711,6 +709,31 @@
                 </p>
                 <input style="font-size: large" type="submit" name="SelectedOperation" value="Capitalize First Letters">
             </fieldset>
+        </fieldset>
+    </form>
+
+    <form id="Listify-FORM" action="/Listify" method="POST">
+        <fieldset>
+            <legend>Listify</legend>
+            Enter Text:
+            <textarea name="TextToListify" rows="10"></textarea>
+
+            <p>
+                Choose Delimiter:
+                <select name="Delimiter">
+                    <option value=",">Comma [ , ]</option>
+                    <option value=" ">Space [ ]</option>
+                    <option value=";">Semicolon [ ; ]</option>
+                    <option value="|">Pipe [ | ]</option>
+                    <option value=":">Colon [ : ]</option>
+                    <option value="&">Ampersand [ & ]</option>
+                    <option value="*">Star [ * ]</option>
+                    <option value="-">Dash [ - ]</option>
+                    <option value="_">Underscore [ _ ]</option>
+                </select>
+            </p>
+
+            <input style="font-size: large" type="submit" value="Listify">
         </fieldset>
     </form>
 
