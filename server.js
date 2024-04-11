@@ -746,6 +746,36 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
     }
 })
 
+app.route(`/RemoveNonASCII`).post((req, res) => {
+    let FolderPaths = req.body.FolderPaths
+    let IncludeSubfolders = req.body.IncludeSubfolders
+
+    if (!FolderPaths) { res.send(incompleteForm(req)); return }
+
+    let folderPathList = FolderPaths.split(`\r\n`)
+    if (IncludeSubfolders) folderPathList = getSubFolders(folderPathList)
+
+    for (folderPath of folderPathList) {
+        let folderItems = fs.readdirSync(folderPath)
+        for (item of folderItems) {
+            try {
+                fs.renameSync(`${folderPath}/${item}`, `${folderPath}/${onlyASCII(item)}`)
+            }
+            catch { }
+        }
+    }
+
+    folderPathListStr = folderPathList.join(`<br>`)
+
+    res.send(`
+    <body style='font-family: arial; word-wrap: break-word'>
+    <h1 style='color:green'>Files Renamed!</h1>
+    ${ReturnToFormBtn}
+    <p>All files with Non-ASCII characters in them have been renamed accordingly in the following folders:</p>
+    <fieldset><code>${folderPathListStr}</code></fieldset>
+    </body>`)
+})
+
 app.route(`/*`).get((req, res) => { res.redirect(`/`) })
 
 //---END OF ROUTING---//

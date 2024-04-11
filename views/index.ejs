@@ -19,6 +19,7 @@
         body {
             font-family: arial;
             word-wrap: break-word;
+            overflow-y: scroll;
         }
 
         input {
@@ -112,10 +113,6 @@
     <!-- END OF BACK TO TOP BUTTON -->
 
 <body ng-app="myApp">
-    <!-- <h3>DanRom LocalTools</h3> -->
-    <!-- <a href="https://www.flaticon.com/free-icons/wrench" title="wrench icons">Wrench icons created by Freepik -
-        Flaticon</a> -->
-
     <fieldset>
         <legend>DanRom LocalTools</legend>
         <button class="routingButton" style="background-color: red;" onclick="showForm('YT-DLP_GUI-FORM')">YT-DLP
@@ -460,7 +457,7 @@
         <fieldset>
             <legend>Remove Line Breaks</legend>
             <input style="font-size: x-large" type="submit" value="Submit">
-            <textarea name="TextToChange" rows="50"></textarea>
+            <textarea name="TextToChange" rows="40"></textarea>
             <input style="font-size: x-large" type="submit" value="Submit">
         </fieldset>
     </form>
@@ -623,6 +620,25 @@
             </p>
 
             <p><input style="font-size: x-large" type="submit" value="Convert"></p>
+        </fieldset>
+    </form>
+
+    <form id="RemoveNonASCII-FORM" action="/RemoveNonASCII" method="POST">
+        <fieldset>
+            <legend>Remove Non-ASCII Characters</legend>
+
+            <input style="font-size: 18pt" type="submit" value="Rename Files">
+            <p>
+                Enter the <b>absolute</b> path(s) of the folder(s) separated by a <b>line break</b> below:
+                <textarea class="textInput" name="FolderPaths" rows="5"></textarea>
+            </p>
+
+            <p>
+                <input type="checkbox" id="IncludeSubfoldersFileExt" name="IncludeSubfolders">
+                <label for="IncludeSubfoldersFileExt">Include Subfolders?</label>
+            </p>
+            <input style="font-size: 18pt" type="submit" value="Rename Files">
+
         </fieldset>
     </form>
 
