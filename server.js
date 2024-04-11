@@ -96,18 +96,6 @@ function openDir(dir, option) {
 
 const dirPathsToMake = [
     FFMPEG_Path
-    // LoopMedia_Path,
-    // ReverseMedia_Path,
-    // ReduceMedia_Path,
-    // ListedFilesInFolder_Path,
-    // ListSubFolders_Path,
-    // ReduceFPS_Path,
-    // ScaleMedia_Path,
-    // ConvertOptimizedMedia_Path,
-    // TrimMedia_Path,
-    // GenerateProxyMedia_Path,
-    // OptimizeMedia_Path,
-    // AdjustAudio_Path,
 ]
 
 for (dirPath of dirPathsToMake) makeDir(dirPath)
@@ -716,9 +704,6 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
                 }
                 break;
             case `Reddit`:
-                /*
-                    https://www.reddit.com/r/Deltarune/comments/1bgjrkp/sketch_of_toriel/
-                */
                 for (url of InputStrs) {
                     let subreddit = url[2]
                     let id = url[4]
@@ -790,8 +775,6 @@ app.route(`/UrlCleaner`).post((req, res) => {
         case `Article`:
             newURL = URLtoClean.split(`#:!:text=`)[0]
         case `Tumblr`:
-            // URLtoClean = URLtoClean.replace(`at.tumblr.com`, `tumblr.com`)
-
             let splitURL = URLtoClean.split(`/`)
             newURL = ``
             if (!/^[\u0030-\u0039]*$/.test(splitURL[splitURL.length - 1])) {
