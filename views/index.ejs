@@ -51,7 +51,7 @@
             width: 100%;
         }
 
-        .routingButton {
+        .standardBtn {
             font-size: large;
             margin-bottom: 4px;
         }
@@ -115,19 +115,19 @@
 <body ng-app="myApp">
     <fieldset>
         <legend>DanRom LocalTools</legend>
-        <button class="routingButton" style="background-color: red;" onclick="showForm('YT-DLP_GUI-FORM')">YT-DLP
+        <button class="standardBtn" style="background-color: red;" onclick="showForm('YT-DLP_GUI-FORM')">YT-DLP
             GUI</button>
-        <button class="routingButton" style="background-color: green;" onclick="showForm('FFMPEG_GUI-FORM')">FFMPEG
+        <button class="standardBtn" style="background-color: green;" onclick="showForm('FFMPEG_GUI-FORM')">FFMPEG
             GUI</button>
-        <button class="routingButton" onclick="showForm('RemoveLineBreaks-FORM')">Remove Line Breaks</button>
+        <button class="standardBtn" onclick="showForm('RemoveLineBreaks-FORM')">Remove Line Breaks</button>
 
-        <button class="routingButton" onclick="showForm('FileName_UrlConverter-FORM')">File Name ↔ URL
+        <button class="standardBtn" onclick="showForm('FileName_UrlConverter-FORM')">File Name ↔ URL
             Converter</button>
-        <button class="routingButton" onclick="showForm('RemoveNonASCII-FORM')">Remove Non-ASCII</button>
-        <button class="routingButton" onclick="showForm('UrlCleaner-FORM')">URL Cleaner</button>
-        <button class="routingButton" onclick="showForm('ChangeLetterCase-FORM')">Change Letter Case</button>
-        <button class="routingButton" onclick="showForm('Listify-FORM')">Listify</button>
-        <button class="routingButton" onclick="showForm('ListFilesInFolder-FORM')">List Files In Folder</button>
+        <button class="standardBtn" onclick="showForm('RemoveNonASCII-FORM')">Remove Non-ASCII</button>
+        <button class="standardBtn" onclick="showForm('UrlCleaner-FORM')">URL Cleaner</button>
+        <button class="standardBtn" onclick="showForm('ChangeLetterCase-FORM')">Change Letter Case</button>
+        <button class="standardBtn" onclick="showForm('Listify-FORM')">Listify</button>
+        <button class="standardBtn" onclick="showForm('ListFilesInFolder-FORM')">List Files In Folder</button>
     </fieldset>
 
     <p>📜 = Create Script | 📂 = Open Folder | 🔡 = Remove Non-ASCII Characters in Folder</p>
@@ -631,7 +631,7 @@
         <fieldset>
             <legend>Remove Non-ASCII Characters</legend>
 
-            <input style="font-size: 18pt" type="submit" value="Rename Files">
+            <input style="font-size: large" type="submit" value="Rename Files">
             <p>
                 Enter the <b>absolute</b> path(s) of the folder(s) separated by a <b>line break</b> below:
                 <textarea class="textInput" name="FolderPaths" rows="5"></textarea>
@@ -641,7 +641,7 @@
                 <input type="checkbox" id="IncludeSubfoldersFileExt" name="IncludeSubfolders">
                 <label for="IncludeSubfoldersFileExt">Include Subfolders?</label>
             </p>
-            <input style="font-size: 18pt" type="submit" value="Rename Files">
+            <input style="font-size: large" type="submit" value="Rename Files">
 
         </fieldset>
     </form>
@@ -668,7 +668,49 @@
                     example</a> to see what a long article URL looks like.
             </p>
 
-            <input style="font-size: 18pt" type="submit" value="Submit">
+            <input style="font-size: large" type="submit" value="Submit">
+        </fieldset>
+    </form>
+
+    <form id="ChangeLetterCase-FORM" action="/ChangeLetterCase" method="POST">
+        <fieldset>
+            <legend>Change Letter Case</legend>
+            <p>
+                Enter Text To Change:
+                <textarea name="TextToChange" rows="5" ng-model="textToChange"></textarea>
+            </p>
+            <fieldset>
+                <h3>Upper Case</h3>
+                <p>{{textToChange.toUpperCase()}}</p>
+                <h3>Lower Case</h3>
+                <p>{{textToChange.toLowerCase()}}</p>
+            </fieldset>
+            <p>
+                <input style="font-size: large" type="submit" name="SelectedOperation" class="standardBtn" value="Invert Case">
+                <input style="font-size: large" type="submit" name="SelectedOperation" class="standardBtn" value="Randomize Case">
+            </p>
+
+            <fieldset>
+                <h3>Set Delimiters For Capitalization</h3>
+                <p>
+                    The fields below only apply for the <b>Capitalize First Letters</b> option. Also, it only
+                    capitalizes lowercase letters and does nothing to uppercase letters. Use the automatic lower-case
+                    feature to generate the proper input for this feature to work.
+                </p>
+                <input type="checkbox" name="SpaceDelim" id="SpaceDelim">
+                <label for="SpaceDelim">Space [ ]</label>
+                <br>
+                <input type="checkbox" name="DashDelim" id="DashDelim">
+                <label for="DashDelim">Dash [ - ]</label>
+                <br>
+                <input type="checkbox" name="UnderDelim" id="UnderDelim">
+                <label for="UnderDelim">Underscore [ _ ]</label>
+                <p>
+                    (Optional) Set custom delimiters below separated by a <b>line break</b>:
+                    <textarea class="textInput" name="CustomDelims" rows="3"></textarea>
+                </p>
+                <input style="font-size: large" type="submit" name="SelectedOperation" value="Capitalize First Letters">
+            </fieldset>
         </fieldset>
     </form>
 

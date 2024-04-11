@@ -811,6 +811,62 @@ app.route(`/UrlCleaner`).post((req, res) => {
     </body>`)
 })
 
+app.route(`/ChangeLetterCase`).post((req, res) => {
+    let str = req.body.TextToChange
+
+    let delimiters = []
+    if (req.body.SpaceDelim) delimiters.push(` `)
+    if (req.body.DashDelim) delimiters.push(`-`)
+    if (req.body.UnderDelim) delimiters.push(`_`)
+    if (req.body.CustomDelims) {
+        let customDelims = req.body.CustomDelims.split(`\r\n`)
+        delimiters = delimiters.concat(customDelims)
+    }
+
+    let newStr = ` `
+
+    if (!req.body.TextToChange || (req.body.SelectedOperation === `Capitalize First Letters` && !req.body.CustomDelims)) { res.send(incompleteForm(req)); return }
+
+    for (let i = 0; i < str.length; i++) {
+        switch (req.body.SelectedOperation) {
+            case `Invert Case`:
+                if (str.charAt(i) === str.charAt(i).toUpperCase()) newStr += str.charAt(i).toLowerCase()
+                else newStr += str.charAt(i).toUpperCase()
+                break;
+            case `Capitalize First Letters`:
+                if (i === 0) newStr += str.charAt(i).toUpperCase()
+                else {
+                    let capitalized = false
+                    for (d of delimiters) {
+                        if (capitalized === false && str.charAt(i - 1) === d) {
+                            newStr += str.charAt(i).toUpperCase()
+                            capitalized = true
+                        }
+                    }
+                    if (capitalized === false) newStr += str.charAt(i)
+                }
+        }
+    }
+
+    if (req.body.SelectedOperation === `Randomize Case`) {
+        newStr += `<p>Choose which variant you'd like. Refresh for new results.</p>`
+        for (var i = 0; i < 100; i++) {
+            newStr += `<li>`
+            for (var j = 0; j < str.length; j++) {
+                randNum = Math.floor(Math.random() * 2)
+                if (randNum === 0) newStr += str.charAt(j).toLowerCase()
+                else newStr += str.charAt(j).toUpperCase()
+            }
+            newStr += `</li>`
+        }
+    }
+
+    res.send(`<body style='font-family: arial; word-wrap: break-word'>
+    ${ReturnToFormBtn}
+    <fieldset>${newStr}</fieldset>
+    </body>`)
+})
+
 app.route(`/*`).get((req, res) => { res.redirect(`/`) })
 
 //---END OF ROUTING---//
