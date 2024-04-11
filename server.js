@@ -212,15 +212,15 @@ function ytdlpHelper(Thumbnail, Subtitles, Comments) {
     return str
 }
 
-function FileNameURL_Helper(FileNameURLs, isURL) {
+function FileName_Url_Helper(outputStrs, isURL) {
     let outputHTMLstr = `
     <body style='font-family: arial; word-wrap: break-word'>
-        <h1>Names Generated!</h1>
-        <ul>`
-    if (isURL) for (currentName of FileNameURLs) outputHTMLstr += `<li><a href='${currentName}'>${currentName}</a></li>`
-    else for (currentName of FileNameURLs) outputHTMLstr += `<li>${currentName}</li>`
+        <h1>Names Generated!</h1>`
 
-    outputHTMLstr += `</ul></body>`
+    if (isURL) for (str of outputStrs) outputHTMLstr += `<fieldset><a href='${str}'>${str}</a></fieldset>`
+    else for (str of outputStrs) outputHTMLstr += `<fieldset>${str}</fieldset>`
+
+    outputHTMLstr += `${ReturnToFormBtn}</body>`
     return outputHTMLstr
 }
 
@@ -263,123 +263,120 @@ let openDirWithScript = `No`
 
 //---BEGINNING OF ROUTING---//
 
-app.route(`/*`)
-    .get((req, res) => {
-        res.render(`index`, {
-            // Global Options
-            openDirWithScript: openDirWithScript,
+app.route(`/`).get((req, res) => {
+    res.render(`index`, {
+        // Global Options
+        openDirWithScript: openDirWithScript,
 
-            // Path Values
-            YTDLP_Path: YTDLP_Path,
-            FFMPEG_Path: FFMPEG_Path,
-            // LoopMedia_Path: LoopMedia_Path,
-            // ReverseMedia_Path: ReverseMedia_Path,
-            // ReduceMedia_Path: ReduceMedia_Path,
-            // ReduceFPS_Path: ReduceFPS_Path,
-            // ScaleMedia_Path: ScaleMedia_Path,
-            // ConvertOptimizedMedia_Path: ConvertOptimizedMedia_Path,
-            // TrimMedia_Path: TrimMedia_Path,
-            // GenerateProxyMedia_Path: GenerateProxyMedia_Path,
-            // OptimizeMedia_Path: OptimizeMedia_Path,
-            // AdjustAudio_Path: AdjustAudio_Path
-        })
+        // Path Values
+        YTDLP_Path: YTDLP_Path,
+        FFMPEG_Path: FFMPEG_Path,
+        // LoopMedia_Path: LoopMedia_Path,
+        // ReverseMedia_Path: ReverseMedia_Path,
+        // ReduceMedia_Path: ReduceMedia_Path,
+        // ReduceFPS_Path: ReduceFPS_Path,
+        // ScaleMedia_Path: ScaleMedia_Path,
+        // ConvertOptimizedMedia_Path: ConvertOptimizedMedia_Path,
+        // TrimMedia_Path: TrimMedia_Path,
+        // GenerateProxyMedia_Path: GenerateProxyMedia_Path,
+        // OptimizeMedia_Path: OptimizeMedia_Path,
+        // AdjustAudio_Path: AdjustAudio_Path
     })
+})
 
-app.route(`/YT-DLP_GUI`)
-    .post((req, res) => {
+app.route(`/YT-DLP_GUI`).post((req, res) => {
+    let URLs = req.body.URLs.split(`\r\n`)
 
-        let URLs = req.body.URLs.split(`\r\n`)
+    let Video = req.body.Video
+    let Audio = req.body.Audio
+    let Thumbnail = req.body.Thumbnail
+    let Subtitles = req.body.Subtitles
+    let Comments = req.body.Comments
 
-        let Video = req.body.Video
-        let Audio = req.body.Audio
-        let Thumbnail = req.body.Thumbnail
-        let Subtitles = req.body.Subtitles
-        let Comments = req.body.Comments
+    let VidRes = req.body.VideoResolution
 
-        let VidRes = req.body.VideoResolution
+    let Channel = req.body.Channel
 
-        let Channel = req.body.Channel
+    // Opens the YT-DLP folder
+    if (req.body.OpenDir) {
+        openDir(YTDLP_Path, true);
+        return;
+    }
 
-        // Opens the YT-DLP folder
-        if (req.body.OpenDir) {
-            openDir(YTDLP_Path, true);
-            return;
+    // Removes non-ASCII characters in the YT-DLP folder
+    else if (req.body.RemoveNonASCII) {
+        removeNonASCII(YTDLP_Path);
+        res.send(removeNonASCIISuccessMessage(YTDLP_Path));
+        return;
+    }
+
+    // Creates the AudioAndImageToVid.ps1 script
+    else if (req.body.AudioAndImageToVid) {
+        const fileName = `_AudioAndImageToVid.ps1`;
+        let items = fs.readdirSync(YTDLP_Path);
+        let commandStr = ``;
+
+        for (item of items) {
+            if (item.endsWith(`.mp3`) && item !== fileName) {
+                let mp3Item = item;
+                let imgItem = req.body.UseBlack ? `_black.jfif` : item.replaceAll(`.mp3`, `.png`);
+                let itemNoExt = item.replaceAll(`.mp3`, ``).replaceAll(`.png`, ``).replaceAll(`.jfif`, ``);
+
+                commandStr += `python _AudioAndImageToVid.py "${imgItem}" "${mp3Item}" "${itemNoExt}.mp4"\n`;
+            }
         }
 
-        // Removes non-ASCII characters in the YT-DLP folder
-        else if (req.body.RemoveNonASCII) {
-            removeNonASCII(YTDLP_Path);
-            res.send(removeNonASCIISuccessMessage(YTDLP_Path));
-            return;
-        }
+        commandStr += powerOp(req.body.PowerOp);
 
-        // Creates the AudioAndImageToVid.ps1 script
-        else if (req.body.AudioAndImageToVid) {
-            const fileName = `_AudioAndImageToVid.ps1`;
-            let items = fs.readdirSync(YTDLP_Path);
-            let commandStr = ``;
+        writeFileToServer(`${commandStr}${finalLine}`, `${YTDLP_Path}/${fileName}`);
+        openDir(YTDLP_Path, openDirWithScript);
+        res.send(scriptSuccessMessage(YTDLP_Path, fileName));
+        return;
+    }
 
-            for (item of items) {
-                if (item.endsWith(`.mp3`) && item !== fileName) {
-                    let mp3Item = item;
-                    let imgItem = req.body.UseBlack ? `_black.jfif` : item.replaceAll(`.mp3`, `.png`);
-                    let itemNoExt = item.replaceAll(`.mp3`, ``).replaceAll(`.png`, ``).replaceAll(`.jfif`, ``);
+    // Check if form is complete
+    else if (!URLs || !YTDLP_Path || (!Video && !Audio && !Thumbnail && !Subtitles && !Comments)) {
+        res.send(incompleteForm(req));
+        return;
+    }
 
-                    commandStr += `python _AudioAndImageToVid.py "${imgItem}" "${mp3Item}" "${itemNoExt}.mp4"\n`;
+    // Creates the main YT-DLP script titled "__DownloadFiles.ps1"
+    else if (req.body.WriteScript) {
+        let commandStr = ``;
+        let baseStr = `./${YTDLP_Path} -o '`;
+        if (Channel) baseStr += `%(uploader)s - `;
+        baseStr += `%(title)s.%(ext)s'`;
+
+        for (URL of URLs) {
+            if (Video) {
+                if (VidRes === `Best`) {
+                    commandStr += `${baseStr} '${URL}' -f bestvideo[ext=mp4]+bestaudio/best/best[ext=mp4]/best --embed-chapters --remux-video mp4 ${ytdlpHelper(Thumbnail, Subtitles, Comments)}\n`;
+                } else {
+                    commandStr += `${baseStr} '${URL}' -f bestvideo[height=${VidRes}][ext=mp4]+bestaudio/best[height=${VidRes}]/best[ext=mp4]/best --embed-chapters --remux-video mp4 ${ytdlpHelper(Thumbnail, Subtitles, Comments)}\n`;
                 }
             }
 
-            commandStr += powerOp(req.body.PowerOp);
-
-            writeFileToServer(`${commandStr}${finalLine}`, `${YTDLP_Path}/${fileName}`);
-            openDir(YTDLP_Path, openDirWithScript);
-            res.send(scriptSuccessMessage(YTDLP_Path, fileName));
-            return;
-        }
-
-        // Check if form is complete
-        else if (!URLs || !YTDLP_Path || (!Video && !Audio && !Thumbnail && !Subtitles && !Comments)) {
-            res.send(incompleteForm(req));
-            return;
-        }
-
-        // Creates the main YT-DLP script titled "__DownloadFiles.ps1"
-        else if (req.body.WriteScript) {
-            let commandStr = ``;
-            let baseStr = `./${YTDLP_Path} -o '`;
-            if (Channel) baseStr += `%(uploader)s - `;
-            baseStr += `%(title)s.%(ext)s'`;
-
-            for (URL of URLs) {
-                if (Video) {
-                    if (VidRes === `Best`) {
-                        commandStr += `${baseStr} '${URL}' -f bestvideo[ext=mp4]+bestaudio/best/best[ext=mp4]/best --embed-chapters --remux-video mp4 ${ytdlpHelper(Thumbnail, Subtitles, Comments)}\n`;
-                    } else {
-                        commandStr += `${baseStr} '${URL}' -f bestvideo[height=${VidRes}][ext=mp4]+bestaudio/best[height=${VidRes}]/best[ext=mp4]/best --embed-chapters --remux-video mp4 ${ytdlpHelper(Thumbnail, Subtitles, Comments)}\n`;
-                    }
-                }
-
-                if (Audio) {
-                    commandStr += `${baseStr} '${URL}' -x --audio-format mp3 `;
-                    if (!Video) commandStr += `${ytdlpHelper(Thumbnail, Subtitles, Comments)} `;
-                    commandStr += `\n`;
-                }
-
-                if (!(Video || Audio)) {
-                    commandStr += `${baseStr} '${URL}' ${ytdlpHelper(Thumbnail, Subtitles, Comments)} --max-filesize 0.001k\n`;
-                }
+            if (Audio) {
+                commandStr += `${baseStr} '${URL}' -x --audio-format mp3 `;
+                if (!Video) commandStr += `${ytdlpHelper(Thumbnail, Subtitles, Comments)} `;
+                commandStr += `\n`;
             }
 
-            commandStr += powerOp(req.body.PowerOp);
-            commandStr = `./${YTDLP_Path} -U\n${commandStr}`;
-
-            let fileName = `__DownloadFiles.ps1`;
-            writeFileToServer(`${commandStr}${finalLine}`, `${YTDLP_Path}/${fileName}`);
-            openDir(YTDLP_Path, openDirWithScript);
-            res.send(scriptSuccessMessage(YTDLP_Path, fileName));
-            return
+            if (!(Video || Audio)) {
+                commandStr += `${baseStr} '${URL}' ${ytdlpHelper(Thumbnail, Subtitles, Comments)} --max-filesize 0.001k\n`;
+            }
         }
-    })
+
+        commandStr += powerOp(req.body.PowerOp);
+        commandStr = `./${YTDLP_Path} -U\n${commandStr}`;
+
+        let fileName = `__DownloadFiles.ps1`;
+        writeFileToServer(`${commandStr}${finalLine}`, `${YTDLP_Path}/${fileName}`);
+        openDir(YTDLP_Path, openDirWithScript);
+        res.send(scriptSuccessMessage(YTDLP_Path, fileName));
+        return
+    }
+})
 
 let inputFilesMarked = false
 let marker = `INPUT`
@@ -564,6 +561,192 @@ foreach ($file in $files) {
 
         }
     })
+
+app.route(`/RemoveLineBreaks`).post((req, res) => {
+    if (req.body.TextToChange == ``) { res.sendStatus(204); return }
+    let textToChange = req.body.TextToChange
+    textToChange = textToChange.replaceAll(`\n`, ` `)
+    res.send(`<body style='font-family: arial; word-wrap: break-word'><p>${textToChange}</p></body>`)
+})
+
+app.route(`/FileName_UrlConverter`).post((req, res) => {
+    if (!req.body.CustomPath && !req.body.InputStrs) {
+        res.send(incompleteForm(req))
+        return
+    }
+
+    let InputStrs
+    if (req.body.CustomPath) InputStrs = fs.readdirSync(req.body.CustomPath)
+    else InputStrs = req.body.InputStrs.split(`\r\n`)
+
+    InputStrs = InputStrs.map(str => str.replace(`https://`, ``));
+
+    let Option = req.body.Option
+    let Platform = req.body.Platform
+
+    if (Option === `FileName_to_URL`) {
+        let OutputURLs = []
+
+        let delimiter = `-`
+        if (Platform === `Instagram`) delimiter = `~IG~`
+        if (Platform === `Newgrounds`) delimiter = `~NG~`
+        if (Platform === `Pixiv`) delimiter = `_`
+        if (Platform === `FurAffinity`) delimiter = `.`
+
+        InputStrs = InputStrs.map(str => str.split(delimiter))
+
+        switch (Platform) {
+            case `Twitter`:
+                for (file of InputStrs) {
+                    let account = file[0]
+                    let id = file[1].split(`.`)[0]
+
+                    let embPrefix = ``
+                    if (req.body.OptDiscordEmb) embPrefix = `vx`
+                    OutputURLs.push(`https://${embPrefix}twitter.com/${account}/status/${id}`)
+                }
+                break;
+            case `Tumblr`:
+                for (file of InputStrs) {
+                    let account = file[0]
+                    let id = file[1].split(`.`)[0]
+                    OutputURLs.push(`https://tumblr.com/${account}/${id}`)
+                }
+                break;
+            case `Instagram`:
+                for (file of InputStrs) {
+                    let id = file[1].split(`.`)[0]
+
+                    let embPrefix = ``
+                    if (req.body.OptDiscordEmb) embPrefix = `dd`
+                    OutputURLs.push(`https://www.${embPrefix}instagram.com/p/${id}`)
+                }
+                break;
+            case `Newgrounds`:
+                for (file of InputStrs) {
+                    let account = file[0]
+                    let postName = file[1].split(`.`)[0]
+                    OutputURLs.push(`https://www.newgrounds.com/art/view/${account}/${postName}`)
+                }
+                break;
+            case `Reddit`:
+                for (file of InputStrs) {
+                    let subreddit = file[1]
+                    let id = file[2]
+                    let postName = file[3].split(`.`)[0]
+                    OutputURLs.push(`https://www.reddit.com/r/${subreddit}/comments/${id}/${postName}`)
+                }
+                break;
+            case `Threads`:
+                for (file of InputStrs) {
+                    let account = file[0]
+                    let id = file[1].split(`.`)[0]
+                    OutputURLs.push(`https://www.threads.net/${account}/post/${id}`)
+                }
+                break;
+            case `Bluesky`:
+                for (file of InputStrs) {
+                    let account = file[0]
+                    let id = file[1].split(`.`)[0]
+                    OutputURLs.push(`https://bsky.app/profile/${account}.bsky.social/post/${id}`)
+                }
+                break;
+            case `Pixiv`:
+                for (file of InputStrs) {
+                    let id = file[0]
+                    let embPrefix = ``
+                    if (req.body.OptDiscordEmb) embPrefix = `h`
+                    OutputURLs.push(`https://www.p${embPrefix}ixiv.net/en/artworks/${id}`)
+                }
+                break;
+            case `FurAffinity`:
+                for (file of InputStrs) {
+                    let id = file[0]
+                    OutputURLs.push(`https://www.furaffinity.net/view/${id}`)
+                }
+                break;
+        }
+        res.send(FileName_Url_Helper(OutputURLs, true))
+
+    } else if (Option === `URL_to_FileName`) {
+        let OutputFileNames = []
+        InputStrs = InputStrs.map(str => str.split(`/`))
+
+        switch (Platform) {
+            case `Twitter`:
+                for (url of InputStrs) {
+                    let account = url[1]
+                    let id = url[3].split(`?`)[0]
+                    OutputFileNames.push(`${account}-${id}-TWITTER`)
+                }
+                break;
+            case `Tumblr`:
+                for (url of InputStrs) {
+                    let account = url[1]
+                    let id = url[2].split(`?`)[0]
+                    OutputFileNames.push(`${account}-${id}-TUMBLR`)
+                }
+                break;
+            case `Bluesky`:
+                for (url of InputStrs) {
+                    let account = url[2].split(`.`)[0]
+                    let id = url[4]
+                    OutputFileNames.push(`${account}-${id}-BLUESKY`)
+                }
+                break;
+            case `Threads`:
+                for (url of InputStrs) {
+                    let account = url[1]
+                    let id = url[3]
+                    OutputFileNames.push(`${account}-${id}-THREADS`)
+                }
+                break;
+            case `Instagram`:
+                for (url of InputStrs) {
+                    let id = url[2]
+                    let CustomAccName = req.body.CustomAccName
+                    OutputFileNames.push(`${CustomAccName}~IG~${id}`)
+                }
+                break;
+            case `Newgrounds`:
+                for (url of InputStrs) {
+                    let account = url[3]
+                    let postName = url[4]
+                    OutputFileNames.push(`${account}~NG~${postName}`)
+                }
+                break;
+            case `Reddit`:
+                /*
+                    https://www.reddit.com/r/Deltarune/comments/1bgjrkp/sketch_of_toriel/
+                */
+                for (url of InputStrs) {
+                    let subreddit = url[2]
+                    let id = url[4]
+                    let postName = url[5]
+                    let CustomAccName = req.body.CustomAccName
+                    OutputFileNames.push(`${CustomAccName}-${subreddit}-${id}-${postName}-REDDIT`)
+                }
+                break;
+            case `Pixiv`:
+                for (url of InputStrs) {
+                    let id = url[3]
+                    let CustomAccName = req.body.CustomAccName
+                    OutputFileNames.push(`${id}_${CustomAccName}_PIXIV`)
+                }
+                break;
+            case `FurAffinity`:
+                for (url of InputStrs) {
+                    let id = url[2]
+                    let CustomAccName = req.body.CustomAccName
+                    OutputFileNames.push(`${id}.${CustomAccName}.FURAFFINITY`)
+                }
+                break;
+        }
+        res.send(FileName_Url_Helper(OutputFileNames, false))
+    }
+})
+
+app.route(`/*`).get((req, res) => { res.redirect(`/`) })
 
 //---END OF ROUTING---//
 

@@ -16,6 +16,11 @@
 
     <!-- START OF GENERAL CSS -->
     <style>
+        body {
+            font-family: arial;
+            word-wrap: break-word;
+        }
+
         input {
             font-size: medium;
         }
@@ -106,22 +111,26 @@
 
     <!-- END OF BACK TO TOP BUTTON -->
 
-<body ng-app="myApp" style="font-family: arial;" style="word-wrap: break-word;">
+<body ng-app="myApp">
     <!-- <h3>DanRom LocalTools</h3> -->
     <!-- <a href="https://www.flaticon.com/free-icons/wrench" title="wrench icons">Wrench icons created by Freepik -
         Flaticon</a> -->
 
-        <p>
-            <button class="routingButton" style="background-color: red;" onclick="showForm('YT-DLP_GUI-FORM')">YT-DLP GUI</button>
-            <button class="routingButton" style="background-color: greenyellow;" onclick="showForm('FFMPEG_GUI-FORM')">FFMPEG GUI</button>
-            <button class="routingButton" onclick="showForm('FileName_UrlConverter-FORM')">File Name ↔ URL Converter</button>
-            <button class="routingButton" onclick="showForm('RemoveNonASCII-FORM')">Remove Non-ASCII</button>
-            <button class="routingButton" onclick="showForm('URL_Cleaner-FORM')">URL Cleaner</button>
-            <button class="routingButton" onclick="showForm('ChangeLetterCase-FORM')">Change Letter Case</button>
-            <button class="routingButton" onclick="showForm('RemoveLineBreaks-FORM')">Remove Line Breaks</button>
-            <button class="routingButton" onclick="showForm('Listify-FORM')">Listify</button>
-            <button class="routingButton" onclick="showForm('ListFilesInFolder-FORM')">List Files In Folder</button>
-        </p>
+    <p>
+        <button class="routingButton" style="background-color: red;" onclick="showForm('YT-DLP_GUI-FORM')">YT-DLP
+            GUI</button>
+        <button class="routingButton" style="background-color: green;" onclick="showForm('FFMPEG_GUI-FORM')">FFMPEG
+            GUI</button>
+        <button class="routingButton" onclick="showForm('RemoveLineBreaks-FORM')">Remove Line Breaks</button>
+
+        <button class="routingButton" onclick="showForm('FileName_UrlConverter-FORM')">File Name ↔ URL
+            Converter</button>
+        <button class="routingButton" onclick="showForm('RemoveNonASCII-FORM')">Remove Non-ASCII</button>
+        <button class="routingButton" onclick="showForm('URL_Cleaner-FORM')">URL Cleaner</button>
+        <button class="routingButton" onclick="showForm('ChangeLetterCase-FORM')">Change Letter Case</button>
+        <button class="routingButton" onclick="showForm('Listify-FORM')">Listify</button>
+        <button class="routingButton" onclick="showForm('ListFilesInFolder-FORM')">List Files In Folder</button>
+    </p>
 
     <p>📜 = Create Script | 📂 = Open Folder | 🔡 = Remove Non-ASCII Characters in Folder</p>
 
@@ -226,7 +235,7 @@
 
     <form action="/FFMPEG_GUI" method="POST" id="FFMPEG_GUI-FORM" style="display: none;">
         <fieldset>
-            <legend style="color: greenyellow;">FFMPEG GUI</legend>
+            <legend style="color: green;">FFMPEG GUI</legend>
 
             <input style="font-size: x-large" type="submit" name="WriteScript" value="📜">
             <input style="font-size: x-large" type="submit" name="OpenDir" value="📂">
@@ -443,6 +452,174 @@
                 <input style="font-size: x-large" type="submit" name="OpenDir" value="📂">
                 <input style="font-size: x-large" type="submit" name="RemoveNonASCII" value="🔡">
             </p>
+        </fieldset>
+    </form>
+
+    <form id="RemoveLineBreaks-FORM" action="/RemoveLineBreaks" method="POST" style="display: none">
+        <fieldset>
+            <input style="font-size: x-large" type="submit" value="Submit">
+            <textarea name="TextToChange" rows="30"></textarea>
+            <input style="font-size: x-large" type="submit" value="Submit">
+        </fieldset>
+    </form>
+
+    <form id="FileName_UrlConverter-FORM" action="/FileName_UrlConverter" method="POST" style="display: none">
+        <fieldset>
+            <input style="font-size: x-large" type="submit" value="Convert">
+
+            <h3>Custom Path Option</h3>
+            <p>
+                Enter custom path to read file names from your computer OR leave blank to input file names/URLs
+                manually:
+                <input class="textInput" name="CustomPath">
+                If a custom path is entered, it will override the "Select Conversion Type option below and automatically
+                use "File Name to URL".
+            </p>
+
+            <h3>Format For File Names</h3>
+            <p>
+                <b>NOTE: </b>Naming conventions below do not include file extensions. The conventions below apply to any
+                valid media file extension.
+            </p>
+
+            <p>
+                <b>General File Name Format:</b>
+                <b style="color: green;">AccountName</b>-<b style="color: green;">ID</b>-<b
+                    style="color: grey;">WhateverElse</b>
+            </p>
+            <p>
+            <ul>
+                <li>
+                    <b style="color: grey;">WhateverElse</b>
+                    will be removed as it doesn't matter what comes after the ID.
+                </li>
+                <li>Supported platforms that follow the general convention are as follows:
+                    <ul>
+                        <li>Twitter / X</li>
+                        <li>Tumblr</li>
+                        <li>Bluesky</li>
+                        <li>Threads (An @ symbol precedes every username)</li>
+                    </ul>
+                </li>
+                <li>Platforms whose formats do not follow this convention will be specified below.</li>
+            </ul>
+
+            <p>
+                <b style="color: deeppink">Instagram:</b>
+                Only the ID matters in the file name, and <i style="color: deeppink">~IG~</i> replaces the dash in the
+                general format.
+                <i style="color: deeppink">Also, the ID in the format below refers to the POST ID, not the image ID when
+                    downloading an image from Instagram.
+                    This design is intentional as it's the easiest way to identify the image author!</i>
+            </p>
+            <p>
+                <b style="color: orange">Newgrounds:</b>
+                <i style="color: orange">~NG~</i> replaces the dash in the general format.
+                Newgrounds formats may not always work since the account name provided by the image isn't always
+                up-to-date.
+            <ul>
+                <li>
+                    <b>Newgrounds File Name Format: </b><b style="color: orange">AccountName</b>~NG~<b
+                        style="color: orange">PostName</b>~NG~WhateverElse
+                </li>
+            </ul>
+            </p>
+            <p>
+                <b style="color: orangered">Reddit:</b>
+                Subreddit name, ID and post name matter in the file name.
+                <i style="color: orangered">Also, the ID in the format below refers to the POST ID, not the image ID when
+                    downloading an image from Reddit.
+                    This design is intentional as it's the easiest way to identify the image author!</i>
+            <ul>
+                <li>
+                    <b>Reddit File Name Format: </b><b style="color: orangered">Subreddit</b>-<b style="color: orangered">ID</b>-<b style="color: orangered">PostName</b></b>-WhateverElse
+                </li>
+            </ul>
+            </p>
+            <p>
+                <b style="color: dodgerblue">Pixiv:</b>
+                Only IDs matter, which must occur in the very beginning, followed by an underscore (_).
+            <ul>
+                <li>
+                    <b>Pixiv File Name Format: </b><b style="color: dodgerblue">ID</b>_AccountName-WhateverElse
+                </li>
+            </ul>
+            </p>
+            <p>
+                <b style="color: brown">FurAffinity:</b>
+                Only IDs matter, which must occur in the very beginning, followed by a dot (.).
+                <i style="color: brown">Also, the ID in the format below refers to the POST ID, not the image ID when
+                    downloading an image from FurAffinity.
+                    This design is intentional as it's the easiest way to identify the image author!</i>
+            <ul>
+                <li>
+                    <b>FurAffinity File Name Format: </b><b style="color: brown">ID</b>.AccountName.WhateverElse
+                </li>
+            </ul>
+            </p>
+
+            <hr>
+
+            <p>
+                Input either all file names or all URLs here:
+                <textarea class="textInput" name="InputStrs" rows="10"></textarea>
+                (This textarea will be ignored if a custom path is used.)
+            </p>
+
+            <p>
+                <input type="checkbox" id="OptDiscordEmb" name="OptDiscordEmb">
+                <label for="OptDiscordEmb">Optimal Discord Embedding in URLs</label>
+            </p>
+            <h4>What's Optimal Discord Embedding?</h4>
+            <p>
+                This option only applies when converting file names to URLs. Discord utilizes
+                special variants of social media URLs for better embedding in messages containing links. Here are a few
+                examples:
+            <ul>
+                <li>twitter.com ➡ vxtwitter.com</li>
+                <li>instagram.com ➡ ddinstagram.com</li>
+                <li>pixiv.net ➡ phixiv.net</li>
+            </ul>
+            These links redirect you the same page, so these variants exist purely for better embedding on Discord and
+            other supported platforms.
+            </p>
+
+            <p><b style="font-size: large;">Select Conversion Type: </b>
+                <select name="Option">
+                    <option value="FileName_to_URL">File Name to URL</option>
+                    <option value="URL_to_FileName">URL to File Name</option>
+                </select>
+            </p>
+
+            <p><b style="font-size: large;">Select Platform: </b>
+                <select name="Platform">
+                    <option value="Twitter">Twitter</option>
+                    <option value="Tumblr">Tumblr</option>
+                    <option value="Bluesky">Bluesky</option>
+                    <option value="Threads">Threads</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="Newgrounds">Newgrounds</option>
+                    <option value="Reddit">Reddit</option>
+                    <option value="Pixiv">Pixiv</option>
+                    <option value="FurAffinity">FurAffinity</option>
+                </select>
+
+            <p>
+                <b>NOTE:</b>
+                If using
+                <i style="color: deeppink">Instagram</i>,
+                <i style="color: orange">Reddit</i>,
+                <i style="color: dodgerblue">Pixiv</i> or
+                <i style="color: brown">FurAffinity</i>
+                combined with "URL to
+                File Name", it's recommended to input the account name below. This field will not be used in any other
+                use case.
+                <br>
+                <input class="textInput" name="CustomAccName">
+            </p>
+            </p>
+
+            <p><input style="font-size: x-large" type="submit" value="Convert"></p>
         </fieldset>
     </form>
 
