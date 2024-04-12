@@ -457,16 +457,16 @@
     <form id="RemoveLineBreaks-FORM" action="/RemoveLineBreaks" method="POST" style="display: none">
         <fieldset>
             <legend>Remove Line Breaks</legend>
-            <input style="font-size: x-large" type="submit" value="Submit">
+            <input style="font-size: large" type="submit" value="Submit">
             <textarea name="TextToChange" rows="40"></textarea>
-            <input style="font-size: x-large" type="submit" value="Submit">
+            <input style="font-size: large" type="submit" value="Submit">
         </fieldset>
     </form>
 
     <form id="FileName_UrlConverter-FORM" action="/FileName_UrlConverter" method="POST" style="display: none">
         <fieldset>
             <legend>File Name ↔ URL Converter</legend>
-            <input style="font-size: x-large" type="submit" value="Convert">
+            <input style="font-size: large" type="submit" value="Convert">
 
             <h3>Custom Path Option</h3>
             <p>
@@ -540,8 +540,17 @@
             </ul>
             </p>
             <p>
+                <b style="color: #00e59b">DeviantArt:</b>
+                Account name, post name and ID matter in the file name.
+                <ul>
+                    <li>
+                        <b>DeviantArt File Name Format: </b><b style="color: #00e59b">AccountName</b>-<b style="color: #00e59b">PostName</b>-<b style="color: #00e59b">ID</b>
+                    </li>
+                </ul>
+            </p>
+            <p>
                 <b style="color: dodgerblue">Pixiv:</b>
-                Only IDs matter, which must occur in the very beginning, followed by an underscore (_).
+                Only IDs matter, which must occur in the very beginning, followed by an underscore [ _ ].
             <ul>
                 <li>
                     <b>Pixiv File Name Format: </b><b style="color: dodgerblue">ID</b>_AccountName_WhateverElse
@@ -550,7 +559,7 @@
             </p>
             <p>
                 <b style="color: brown">FurAffinity:</b>
-                Only IDs matter, which must occur in the very beginning, followed by a dot (.).
+                Only IDs matter, which must occur in the very beginning, followed by a dot [ . ].
                 <i style="color: brown">Also, the ID in the format below refers to the POST ID, not the image ID when
                     downloading an image from FurAffinity.
                     This design is intentional as it's the easiest way to identify the image author!</i>
@@ -561,6 +570,9 @@
             </ul>
             </p>
 
+            <p>
+                <b>Pillowfort:</b>
+                Only IDs matter. Otherwise, the naming convention is the same.
             <hr>
 
             <p>
@@ -603,8 +615,10 @@
                     <option value="Instagram">Instagram</option>
                     <option value="Newgrounds">Newgrounds</option>
                     <option value="Reddit">Reddit</option>
+                    <option value="DeviantArt">DeviantArt</option>
                     <option value="Pixiv">Pixiv</option>
                     <option value="FurAffinity">FurAffinity</option>
+                    <option value="Pillowfort">Pillowfort</option>
                 </select>
 
             <p>
@@ -612,8 +626,10 @@
                 If using
                 <i style="color: deeppink">Instagram</i>,
                 <i style="color: orange">Reddit</i>,
-                <i style="color: dodgerblue">Pixiv</i> or
+                <i style="color: dodgerblue">Pixiv</i> 
                 <i style="color: brown">FurAffinity</i>
+                or
+                <i>Pillowfort</i>
                 combined with "URL to
                 File Name", it's recommended to input the account name below. This field will not be used in any other
                 use case.
@@ -622,7 +638,7 @@
             </p>
             </p>
 
-            <p><input style="font-size: x-large" type="submit" value="Convert"></p>
+            <p><input style="font-size: large" type="submit" value="Convert"></p>
         </fieldset>
     </form>
 

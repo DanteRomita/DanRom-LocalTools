@@ -551,10 +551,13 @@ foreach ($file in $files) {
     })
 
 app.route(`/RemoveLineBreaks`).post((req, res) => {
-    if (req.body.TextToChange == ``) { res.sendStatus(204); return }
+    if (req.body.TextToChange == ``) { res.send(incompleteForm(req)); return }
     let textToChange = req.body.TextToChange
     textToChange = textToChange.replaceAll(`\n`, ` `)
-    res.send(`<body style='font-family: arial; word-wrap: break-word'><p>${textToChange}</p></body>`)
+    res.send(`<body style='font-family: arial; word-wrap: break-word'>
+    ${ReturnToFormBtn}
+    <p>${textToChange}</p>
+    </body>`)
 })
 
 app.route(`/FileName_UrlConverter`).post((req, res) => {
@@ -601,6 +604,20 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
                     OutputURLs.push(`https://tumblr.com/${account}/${id}`)
                 }
                 break;
+            case `Bluesky`:
+                for (file of InputStrs) {
+                    let account = file[0]
+                    let id = file[1].split(`.`)[0]
+                    OutputURLs.push(`https://bsky.app/profile/${account}.bsky.social/post/${id}`)
+                }
+                break;
+            case `Threads`:
+                for (file of InputStrs) {
+                    let account = file[0]
+                    let id = file[1].split(`.`)[0]
+                    OutputURLs.push(`https://www.threads.net/${account}/post/${id}`)
+                }
+                break;
             case `Instagram`:
                 for (file of InputStrs) {
                     let id = file[1].split(`.`)[0]
@@ -625,18 +642,12 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
                     OutputURLs.push(`https://www.reddit.com/r/${subreddit}/comments/${id}/${postName}`)
                 }
                 break;
-            case `Threads`:
+            case `DeviantArt`:
                 for (file of InputStrs) {
                     let account = file[0]
-                    let id = file[1].split(`.`)[0]
-                    OutputURLs.push(`https://www.threads.net/${account}/post/${id}`)
-                }
-                break;
-            case `Bluesky`:
-                for (file of InputStrs) {
-                    let account = file[0]
-                    let id = file[1].split(`.`)[0]
-                    OutputURLs.push(`https://bsky.app/profile/${account}.bsky.social/post/${id}`)
+                    let postName = file[1]
+                    let id = file[2].split(`.`)[0]
+                    OutputURLs.push(`https://www.deviantart.com/${account}/art/${postName}-${id}`)
                 }
                 break;
             case `Pixiv`:
@@ -651,6 +662,12 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
                 for (file of InputStrs) {
                     let id = file[0]
                     OutputURLs.push(`https://www.furaffinity.net/view/${id}`)
+                }
+                break;
+            case `Pillowfort`:
+                for (file of InputStrs) {
+                    let id = file[1].split(`.`)[0]
+                    OutputURLs.push(`https://www.pillowfort.social/posts/${id}`)
                 }
                 break;
         }
@@ -693,14 +710,14 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
                 for (url of InputStrs) {
                     let id = url[2]
                     let CustomAccName = req.body.CustomAccName
-                    OutputFileNames.push(`${CustomAccName}~IG~${id}`)
+                    OutputFileNames.push(`${CustomAccName}~IG~${id}~IG~INSTAGRAM`)
                 }
                 break;
             case `Newgrounds`:
                 for (url of InputStrs) {
                     let account = url[3]
                     let postName = url[4]
-                    OutputFileNames.push(`${account}~NG~${postName}`)
+                    OutputFileNames.push(`${account}~NG~${postName}~NG~NEWGROUNDS`)
                 }
                 break;
             case `Reddit`:
@@ -710,6 +727,15 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
                     let postName = url[5]
                     let CustomAccName = req.body.CustomAccName
                     OutputFileNames.push(`${CustomAccName}-${subreddit}-${id}-${postName}-REDDIT`)
+                }
+                break;
+            case `DeviantArt`:
+                for (url of InputStrs) {
+                    console.log(url)
+                    let account = url[1]
+                    let postName = url[3].split(`-`)[0]
+                    let id = url[3].split(`-`)[1]
+                    OutputFileNames.push(`${account}-${postName}-${id}-DEVIANTART`)
                 }
                 break;
             case `Pixiv`:
@@ -724,6 +750,13 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
                     let id = url[2]
                     let CustomAccName = req.body.CustomAccName
                     OutputFileNames.push(`${id}.${CustomAccName}.FURAFFINITY`)
+                }
+                break;
+            case `Pillowfort`:
+                for (url of InputStrs) {
+                    let id = url[2]
+                    let CustomAccName = req.body.CustomAccName
+                    OutputFileNames.push(`${CustomAccName}-${id}-PILLOWFORT`)
                 }
                 break;
         }
