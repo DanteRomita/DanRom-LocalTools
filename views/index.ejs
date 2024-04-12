@@ -43,6 +43,10 @@
             font-size: large;
         }
 
+        button {
+            user-select: none;
+        }
+
         .textInput {
             -webkit-box-sizing: border-box;
             -moz-box-sizing: border-box;
@@ -542,11 +546,12 @@
             <p>
                 <b style="color: #00e59b">DeviantArt:</b>
                 Account name, post name and ID matter in the file name.
-                <ul>
-                    <li>
-                        <b>DeviantArt File Name Format: </b><b style="color: #00e59b">AccountName</b>-<b style="color: #00e59b">PostName</b>-<b style="color: #00e59b">ID</b>
-                    </li>
-                </ul>
+            <ul>
+                <li>
+                    <b>DeviantArt File Name Format: </b><b style="color: #00e59b">AccountName</b>-<b
+                        style="color: #00e59b">PostName</b>-<b style="color: #00e59b">ID</b>
+                </li>
+            </ul>
             </p>
             <p>
                 <b style="color: dodgerblue">Pixiv:</b>
@@ -573,7 +578,7 @@
             <p>
                 <b>Pillowfort:</b>
                 Only IDs matter. Otherwise, the naming convention is the same.
-            <hr>
+                <hr>
 
             <p>
                 Input either all file names or all URLs here:
@@ -626,7 +631,7 @@
                 If using
                 <i style="color: deeppink">Instagram</i>,
                 <i style="color: orange">Reddit</i>,
-                <i style="color: dodgerblue">Pixiv</i> 
+                <i style="color: dodgerblue">Pixiv</i>
                 <i style="color: brown">FurAffinity</i>
                 or
                 <i>Pillowfort</i>
@@ -669,14 +674,15 @@
 
             <p>
                 Select the type of URL you want to clean:
-                <select name = "UrlType">
+                <select name="UrlType">
                     <option value="Article">Article</option>
+                    <option value="YouTube">YouTube</option>
                     <option value="Twitter">Twitter</option>
                     <option value="Tumblr">Tumblr</option>
                     <option value="Instagram">Instagram</option>
                 </select>
             </p>
-            
+
             <p>
                 Check out <a
                     href="https://www.allthescience.org/what-is-a-research-article.htm#:~:text=A%20research%20article%20is%20a%20written%20paper%20that,a%20general%20scope%20as%20a%20means%20of%20introduction.">this
@@ -690,8 +696,8 @@
     <form id="ChangeLetterCase-FORM" action="/ChangeLetterCase" method="POST">
         <fieldset>
             <legend>Change Letter Case</legend>
-                Enter Text To Change:
-                <textarea name="TextToChange" rows="5" ng-model="textToChange"></textarea>
+            Enter Text To Change:
+            <textarea name="TextToChange" rows="5" ng-model="textToChange"></textarea>
             <fieldset>
                 <h3>Upper Case</h3>
                 <p>{{textToChange.toUpperCase()}}</p>
@@ -699,8 +705,10 @@
                 <p>{{textToChange.toLowerCase()}}</p>
             </fieldset>
             <p>
-                <input style="font-size: large" type="submit" name="SelectedOperation" class="standardBtn" value="Invert Case">
-                <input style="font-size: large" type="submit" name="SelectedOperation" class="standardBtn" value="Randomize Case">
+                <input style="font-size: large" type="submit" name="SelectedOperation" class="standardBtn"
+                    value="Invert Case">
+                <input style="font-size: large" type="submit" name="SelectedOperation" class="standardBtn"
+                    value="Randomize Case">
             </p>
 
             <fieldset>

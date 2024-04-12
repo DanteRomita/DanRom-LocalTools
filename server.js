@@ -100,7 +100,7 @@ const dirPathsToMake = [
 
 for (dirPath of dirPathsToMake) makeDir(dirPath)
 
-const ReturnToFormBtn = `<p><button style='font-size: large' onclick="window.history.back();">Return to Form</button></p>`
+const ReturnToFormBtn = `<p><button style='font-size: large; user-select: none' onclick="window.history.back();">Return to Form</button></p>`
 function scriptSuccessMessage(path, fileName) {
     return `
     <body style='font-family: arial; word-wrap: break-word'>
@@ -201,9 +201,7 @@ function ytdlpHelper(Thumbnail, Subtitles, Comments) {
 }
 
 function FileName_Url_Helper(outputStrs, isURL) {
-    let outputHTMLstr = `
-    <body style='font-family: arial; word-wrap: break-word'>
-        <h1>Names Generated!</h1>`
+    let outputHTMLstr = `<body style='font-family: arial; word-wrap: break-word'>`
 
     if (isURL) for (str of outputStrs) outputHTMLstr += `<fieldset><a href='${str}'>${str}</a></fieldset>`
     else for (str of outputStrs) outputHTMLstr += `<fieldset>${str}</fieldset>`
@@ -821,7 +819,6 @@ app.route(`/UrlCleaner`).post((req, res) => {
             break;
     }
     res.send(`<body style='font-family: arial; word-wrap: break-word'>
-    <h1 style='color:green'>URL Cleaned!</h1>
     <a href="${newURL}">${newURL}</a>
     ${ReturnToFormBtn}
     </body>`)
