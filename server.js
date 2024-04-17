@@ -392,7 +392,8 @@ app.route(`/FFMPEG_GUI`)
             const fileName = `__FFMPEG_Script.ps1`
 
             let MarkOption = req.body.MarkOption;
-            let IncExc_Option = req.body.IncExc_Option;
+            let IncExc_Option = req.body.IncExc_Option
+            if (req.body.TrimMedia) IncExc_Option = `All`;
             let IncExc_Items = req.body.IncExc_Items.split(`\r\n`).filter(item => item !== '');
             let PowerOp = req.body.PowerOp;
             let OutputExtensions = req.body.OutputExtensions.split(`\r\n`).filter(item => item !== '');
