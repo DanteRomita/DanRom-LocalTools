@@ -241,10 +241,19 @@
             <input style="font-size: x-large" type="submit" name="WriteScript" value="📜">
             <input style="font-size: x-large" type="submit" name="OpenDir" value="📂">
             <input style="font-size: x-large" type="submit" name="RemoveNonASCII" value="🔡">
+            <p>
+                After generating all files, use these two buttons below to mark the media files accordingly. <b
+                    style="color: orange">This will not work if the naming conventions for the files are changed!</b>
+                    These two buttons also leverage the <b style="color: orange">Include/Exclude Options</b>, so ensure you filter the files you do and don't want to rename!
+            </p>
+            <p>
+                <input style="font-size: large" type="submit" name="MarkLargerFiles" value="Mark Larger Files">
+                <input style="font-size: large" type="submit" name="MarkInputFiles" value="Mark Input Files">
+            </p>
 
             <!-- START OF GENERAL CONFIGURATIONS -->
 
-            <h3>Marking Options</h3>
+            <!-- <h3>Marking Options</h3>
 
             <p>
                 <input type="radio" id="MarkOption1" name="MarkOption" value="None" checked>
@@ -253,10 +262,11 @@
                 <label for="MarkOption2">Mark Larger Files When Finished</label><br>
                 <input type="radio" id="MarkOption3" name="MarkOption" value="MarkInput">
                 <label for="MarkOption3">Mark Input Files When Finished</label>
-            </p>
+            </p> 
             <p style="color:orange">
                 <b>WARNING! </b>Options other than "None" will rename your files!
             </p>
+            -->
             <h3>Custom Path Option</h3>
 
             <p>
@@ -269,6 +279,14 @@
                 the <b>
                     <%= FFMPEG_Path %>
                 </b> folder in the root of the project.
+            </p>
+
+            <h3>Append At End Option</h3>
+            <input type="checkbox" name="AppendToEnd" id="AppendToEnd">
+            <label for="AppendToEnd">Append to End?</label>
+            <p>
+                If checked, the string `<i>(OUTPUT)</i>` will appear at the end of the file name. Otherwise, it will be
+                inserted at the beginning.
             </p>
 
             <h3>Include/Exclude Options</h3>
@@ -455,6 +473,17 @@
                 <input style="font-size: x-large" type="submit" name="OpenDir" value="📂">
                 <input style="font-size: x-large" type="submit" name="RemoveNonASCII" value="🔡">
             </p>
+
+            <p>
+                After generating all files, use these two buttons below to mark the media files accordingly. <b
+                    style="color: orange">This will not work if the naming conventions for the files are changed!</b>
+                    These two buttons also leverage the <b style="color: orange">Include/Exclude Options</b>, so ensure you filter the files you do and don't want to rename!
+            </p>
+            <p>
+                <input style="font-size: large" type="submit" name="MarkLargerFiles" value="Mark Larger Files">
+                <input style="font-size: large" type="submit" name="MarkInputFiles" value="Mark Input Files">
+            </p>
+
         </fieldset>
     </form>
 

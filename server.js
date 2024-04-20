@@ -104,8 +104,9 @@ const ReturnToFormBtn = `<p><button style='font-size: large; user-select: none' 
 function scriptSuccessMessage(path, fileName) {
     return `
     <body style='font-family: arial; word-wrap: break-word'>
-        <h1 style='color:green'>Success!</h1>
-        <p>Navigate to the <b>${path}</b> folder in the project to find the <b>${fileName}</b> file.
+        <h1 style='color:green'>Script Successfully Created!</h1>
+        <p>Navigate to the <b>${path}</b> folder in the project to find the <b>${fileName}</b> file.</p>
+        <p><b style='color: red'>If you're not entirely sure about the script's contents, make sure to check its contents before running it!</b></p>
         ${ReturnToFormBtn}
     </body>
     `
@@ -364,17 +365,18 @@ app.route(`/YT-DLP_GUI`).post((req, res) => {
     }
 })
 
-let inputFilesMarked = false
-let marker = `INPUT`
+// let inputFilesMarked = false
+// let marker = `INPUT`
 
 app.route(`/FFMPEG_GUI`)
     .post((req, res) => {
-        inputFilesMarked = false
-        marker = `INPUT`
+        // inputFilesMarked = false
+        // marker = `INPUT`
 
         let CustomPath = req.body.CustomPath;
         let pathToUse = FFMPEG_Path
         if (CustomPath !== ``) pathToUse = CustomPath.replaceAll(`"`, ``)
+        let folderItems = fs.readdirSync(pathToUse)
 
         if (req.body.OpenDir) {
             openDir(pathToUse, true);
@@ -387,11 +389,97 @@ app.route(`/FFMPEG_GUI`)
             return
         }
 
-        else if (req.body.WriteScript) {
-            // Initialization
-            const fileName = `__FFMPEG_Script.ps1`
+        else if (req.body.MarkLargerFiles) {
+            const fileName = `__MarkLargerFiles.ps1`
+            let IncExc_Option = req.body.IncExc_Option
+            let IncExc_Items = req.body.IncExc_Items.split(`\r\n`).filter(item => item !== '');
 
-            let MarkOption = req.body.MarkOption;
+            let substr = `(OUTPUT)`
+            let inputFolderItems = folderItems.filter(s => !s.includes(substr));
+
+            let commandStr = ``
+
+            for (item of inputFolderItems) {
+                if (fileFilter(item, fileName, IncExc_Option, IncExc_Items) && item !== `__FFMPEG_Script.ps1`) {
+                    let startVariant = `(OUTPUT) ${item}`
+                    let endVariant = `${item} (OUTPUT).${item.split(`.`).pop()}`
+
+                    let itemFilePath = `${pathToUse}/${item}`
+                    let variantFilePath
+
+                    if (folderItems.includes(startVariant)) variantFilePath = `${pathToUse}/${startVariant}`
+                    else if (folderItems.includes(endVariant)) variantFilePath = `${pathToUse}/${endVariant}`
+
+                    commandStr += `$file1 = "${itemFilePath}"
+$file2 = "${variantFilePath}"
+$file1Exists = Test-Path -LiteralPath $file1 -PathType Leaf
+$file2Exists = Test-Path -LiteralPath $file2 -PathType Leaf
+if ($file1Exists -and $file2Exists) {
+    $file1Size = (Get-Item -LiteralPath $file1).Length
+    $file2Size = (Get-Item -LiteralPath $file2).Length
+    if ($file1Size -gt $file2Size) {
+        $newFileName1 = "_____LARGER $((Split-Path -Path $file1 -Leaf))"
+        Rename-Item -LiteralPath $file1 -NewName $newFileName1
+        Rename-Item -LiteralPath $file2 -NewName (Get-Item -LiteralPath $file1).Name
+    } elseif ($file1Size -le $file2Size) {
+        $newFileName2 = "_____LARGER $((Split-Path -Path $file2 -Leaf))"
+        Rename-Item -LiteralPath $file2 -NewName $newFileName2
+}
+}\n\n`
+                }
+            }
+            writeFileToServer(`${commandStr}${finalLine}`, `${pathToUse}/${fileName}`);
+            openDir(pathToUse, true);
+            try {
+                res.send(scriptSuccessMessage(pathToUse, fileName));
+            } catch { }
+        }
+
+        else if (req.body.MarkInputFiles) {
+            const fileName = `__MarkInputFiles.ps1`
+            let IncExc_Option = req.body.IncExc_Option
+            let IncExc_Items = req.body.IncExc_Items.split(`\r\n`).filter(item => item !== '');
+
+            let substr = `(OUTPUT)`
+            let inputFolderItems = folderItems.filter(s => !s.includes(substr));
+
+            let commandStr = ``
+
+            for (item of inputFolderItems) {
+                if (fileFilter(item, fileName, IncExc_Option, IncExc_Items) && item !== `__FFMPEG_Script.ps1`) {
+                    let startVariant = `(OUTPUT) ${item}`
+                    let endVariant = `${item} (OUTPUT).${item.split(`.`).pop()}`
+
+                    let itemFilePath = `${pathToUse}/${item}`
+                    let variantFilePath
+
+                    if (folderItems.includes(startVariant)) variantFilePath = `${pathToUse}/${startVariant}`
+                    else if (folderItems.includes(endVariant)) variantFilePath = `${pathToUse}/${endVariant}`
+
+                    commandStr += `$file1 = "${itemFilePath}"
+$file2 = "${variantFilePath}"
+$file1Exists = Test-Path -LiteralPath $file1 -PathType Leaf
+$file2Exists = Test-Path -LiteralPath $file2 -PathType Leaf
+if ($file1Exists -and $file2Exists) {
+    $newFileName1 = "_____INPUT $((Split-Path -Path $file1 -Leaf))"
+    Rename-Item -LiteralPath $file1 -NewName $newFileName1
+    $newFileName2 = (Get-Item -LiteralPath $file1).Name
+    Rename-Item -LiteralPath $file2 -NewName $newFileName2
+}\n\n`
+                }
+            }
+            writeFileToServer(`${commandStr}${finalLine}`, `${pathToUse}/${fileName}`);
+            openDir(pathToUse, true);
+            try {
+                res.send(scriptSuccessMessage(pathToUse, fileName));
+            } catch { }
+        }
+
+        else if (req.body.WriteScript) {
+            const fileName = `__FFMPEG_Script.ps1`
+            // Initialization
+
+            // let MarkOption = req.body.MarkOption;
             let IncExc_Option = req.body.IncExc_Option
             if (req.body.TrimMedia) IncExc_Option = `All`;
             let IncExc_Items = req.body.IncExc_Items.split(`\r\n`).filter(item => item !== '');
@@ -410,8 +498,6 @@ app.route(`/FFMPEG_GUI`)
             let OutputFileNames = req.body.OutputFileNames.split(`\r\n`).filter(item => item !== '');
             let StartTimes = req.body.StartTimes.split(`\r\n`).filter(item => item !== '')
             let EndTimes = req.body.EndTimes.split(`\r\n`).filter(item => item !== '')
-
-            let folderItems = fs.readdirSync(pathToUse)
 
             let commandStr = ``
 
@@ -450,12 +536,12 @@ app.route(`/FFMPEG_GUI`)
                     commandStr += `ffmpeg -ss "${StartTimes[i]}" -to "${EndTimes[i]}" -i "${InputFileNames[i].replaceAll(`$`, `\`$`)}" -vcodec copy -acodec copy "${OutputFileNames[i].replaceAll(`$`, `\`$`)}"\n`
                 }
 
-                if (req.body.MarkOption === `MarkInput`) {
-                    for (let i = 0; i < InputFileNames.length; i++) {
-                        commandStr += `Rename-Item -LiteralPath "${InputFileNames[i].replaceAll(`$`, `\`$`)}" -NewName "_____${marker} ${InputFileNames[i].replaceAll(`$`, `\`$`)}"\n`
-                    }
-                    inputFilesMarked = true
-                }
+                // if (req.body.MarkOption === `MarkInput`) {
+                //     for (let i = 0; i < InputFileNames.length; i++) {
+                //         commandStr += `Rename-Item -LiteralPath "${InputFileNames[i].replaceAll(`$`, `\`$`)}" -NewName "_____${marker} ${InputFileNames[i].replaceAll(`$`, `\`$`)}"\n`
+                //     }
+                //     inputFilesMarked = true
+                // }
             }
 
             let selectedFiles
@@ -466,16 +552,13 @@ app.route(`/FFMPEG_GUI`)
             let modifications = ``
 
             let loopStr = ``
-            if (req.body.LoopMedia && NumLoops !== ``) {
-                loopStr += `-stream_loop ${NumLoops}`
-            }
+            if (req.body.LoopMedia && NumLoops !== ``) loopStr += `-stream_loop ${NumLoops}`
 
             let vfFilters = ``
-            let afFilters = `loudnorm,`
+            let afFilters = `loudnorm,` // Always add -af loudnorm since it normalizes the audio
 
-            if (req.body.UseCustomResolution && TypeOfScaling === `16x9`) {
-                vfFilters += `scale=${Preset_16x9_Dimensions},`
-            }
+            if (req.body.UseCustomResolution && TypeOfScaling === `16x9`) vfFilters += `scale=${Preset_16x9_Dimensions},`
+
             if (req.body.UseCustomResolution && TypeOfScaling === `CustomScaling` && ScaleMultiplier !== ``) {
                 vfFilters += `scale=iw*${ScaleMultiplier}:ih*${ScaleMultiplier}:-1:flags=${ScaleType},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse,`
             }
@@ -506,44 +589,47 @@ app.route(`/FFMPEG_GUI`)
                     inFile.replaceAll(`$`, `\`$`)
 
                     let outFile
-                    // Determine output file extensions
                     if (req.body.ConvertFileType && OutputExtensions.length > 0) {    // Use corresponding extensions in OutputExtensions
-                        let finalExt = ``
+                        // let finalExt = ``
                         for (ext of OutputExtensions) {
-                            outFile = `(OUTPUT) ${removeExt(inFile)}.${ext}`
+                            if (req.body.AppendToEnd) outFile = `${removeExt(inFile)} (OUTPUT).${ext}`
+                            else outFile = `(OUTPUT) ${removeExt(inFile)}${ext}`
+
                             commandStr += `ffmpeg ${loopStr} -i "${inFile}" ${modifications} "${outFile}"\n`
-                            finalExt = ext
+                            // finalExt = ext
                         }
-                        if (MarkOption !== `None`) commandStr += handleMarking(inFile, outFile, fileName, MarkOption, finalExt)
-                    } else {
-                        // Use default extensions
-                        outFile = `(OUTPUT) ${inFile}`
+                        // if (MarkOption !== `None`) commandStr += handleMarking(inFile, outFile, fileName, MarkOption, finalExt)
+                    } else {    // Use input file extension
+                        let ext = inFile.split(`.`).pop();
+
+                        if (req.body.AppendToEnd) outFile = `${inFile} (OUTPUT).${ext}`
+                        else outFile = `(OUTPUT) ${inFile}`
                         commandStr += `ffmpeg ${loopStr} -i "${inFile}" ${modifications} "${outFile}"\n`
 
-                        if (MarkOption !== `None`) commandStr += handleMarking(inFile, fileName, MarkOption)
+                        // if (MarkOption !== `None`) commandStr += handleMarking(inFile, fileName, MarkOption)
                     }
                 }
             }
 
-            // Final pass of any files not properly renamed
-            if (MarkOption !== `None`) commandStr += `
-$files = Get-ChildItem -LiteralPath "${pathToUse}" -File
-foreach ($file in $files) {
-    # Check if the file name contains '(OUTPUT)'
-    if ($file.Name -like '*(OUTPUT)*') {
-        # Remove '(OUTPUT)' from the file name
-        $newName = $file.Name -replace '\\(OUTPUT\\) ', ''
-        # Rename the file
-        Rename-Item -Path $file.FullName -NewName $newName
-    }
-}\n`;
+            //             // Final pass of any files not properly renamed
+            //             if (MarkOption !== `None`) commandStr += `
+            // $files = Get-ChildItem -LiteralPath "${pathToUse}" -File
+            // foreach ($file in $files) {
+            //     # Check if the file name contains '(OUTPUT)'
+            //     if ($file.Name -like '*(OUTPUT)*') {
+            //         # Remove '(OUTPUT)' from the file name
+            //         $newName = $file.Name -replace '\\(OUTPUT\\) ', ''
+            //         # Rename the file
+            //         Rename-Item -Path $file.FullName -NewName $newName
+            //     }
+            // }\n`;
 
             // Finalize Script
             commandStr += powerOp(PowerOp);
             writeFileToServer(`${commandStr}${finalLine}`, `${pathToUse}/${fileName}`);
-            openDir(FFMPEG_Path, openDirWithScript);
+            openDir(pathToUse, openDirWithScript);
             try {
-                res.send(scriptSuccessMessage(FFMPEG_Path, fileName));
+                res.send(scriptSuccessMessage(pathToUse, fileName));
             } catch { }
 
         }
@@ -730,7 +816,6 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
                 break;
             case `DeviantArt`:
                 for (url of InputStrs) {
-                    console.log(url)
                     let account = url[1]
                     let postName = url[3].split(`-`)[0]
                     let id = url[3].split(`-`)[1]
