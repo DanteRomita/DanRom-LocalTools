@@ -593,7 +593,7 @@ if ($file1Exists -and $file2Exists) {
                         // let finalExt = ``
                         for (ext of OutputExtensions) {
                             if (req.body.AppendToEnd) outFile = `${removeExt(inFile)} (OUTPUT).${ext}`
-                            else outFile = `(OUTPUT) ${removeExt(inFile)}${ext}`
+                            else outFile = `(OUTPUT) ${removeExt(inFile)}.${ext}`
 
                             commandStr += `ffmpeg ${loopStr} -i "${inFile}" ${modifications} "${outFile}"\n`
                             // finalExt = ext
