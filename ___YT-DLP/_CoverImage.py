@@ -22,7 +22,7 @@ for fileName in fileNames:
 
 fileLines.append("echo 'COMPLETE!'")
 
-outputFileName = "0-RUN_SECOND-CoverImage.ps1"
+outputFileName = "_RUN_SECOND-CoverImage.ps1"
 
 file = open(outputFileName, "w")
 
