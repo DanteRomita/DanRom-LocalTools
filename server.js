@@ -983,7 +983,7 @@ app.route(`/*`).get((req, res) => { res.redirect(`/`) })
 //---END OF ROUTING---//
 
 // Start the server
-const port = 2002
+const port = 2024
 const appNameStr = `DanRom LocalTools`
 app.listen(port, () => {
     console.log(`--------------------`);
