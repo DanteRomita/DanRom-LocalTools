@@ -678,7 +678,7 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
                     let id = file[1].split(`.`)[0]
 
                     let embPrefix = ``
-                    if (req.body.OptDiscordEmb) embPrefix = `vx`
+                    if (req.body.OptDiscordEmb) embPrefix = `fx`
                     OutputURLs.push(`https://${embPrefix}twitter.com/${account}/status/${id}`)
                 }
                 break;
@@ -983,7 +983,7 @@ app.route(`/*`).get((req, res) => { res.redirect(`/`) })
 //---END OF ROUTING---//
 
 // Start the server
-const port = 2024
+const port = 3680
 const appNameStr = `DanRom LocalTools`
 app.listen(port, () => {
     console.log(`--------------------`);
