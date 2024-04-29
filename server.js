@@ -202,12 +202,12 @@ function ytdlpHelper(Thumbnail, Subtitles, Comments) {
 }
 
 function FileName_Url_Helper(outputStrs, isURL) {
-    let outputHTMLstr = `<body style='font-family: arial; word-wrap: break-word'>`
+    let outputHTMLstr = `<body style='font-family: arial; word-wrap: break-word'>${ReturnToFormBtn}`
 
     if (isURL) for (str of outputStrs) outputHTMLstr += `<fieldset><a href='${str}'>${str}</a></fieldset>`
     else for (str of outputStrs) outputHTMLstr += `<fieldset>${str}</fieldset>`
 
-    outputHTMLstr += `${ReturnToFormBtn}</body>`
+    outputHTMLstr += `</body>`
     return outputHTMLstr
 }
 
@@ -659,192 +659,201 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
 
     let Option = req.body.Option
     let Platform = req.body.Platform
+    try {
+        if (Option === `FileName_to_URL`) {
+            let OutputURLs = []
 
-    if (Option === `FileName_to_URL`) {
-        let OutputURLs = []
+            let delimiter = `-`
+            if (Platform === `Instagram`) delimiter = `~IG~`
+            if (Platform === `Newgrounds`) delimiter = `~NG~`
+            if (Platform === `Pixiv`) delimiter = `_`
+            if (Platform === `FurAffinity`) delimiter = `.`
 
-        let delimiter = `-`
-        if (Platform === `Instagram`) delimiter = `~IG~`
-        if (Platform === `Newgrounds`) delimiter = `~NG~`
-        if (Platform === `Pixiv`) delimiter = `_`
-        if (Platform === `FurAffinity`) delimiter = `.`
+            InputStrs = InputStrs.map(str => str.split(delimiter))
 
-        InputStrs = InputStrs.map(str => str.split(delimiter))
+            switch (Platform) {
+                case `Twitter`:
+                    for (file of InputStrs) {
+                        let account = file[0]
+                        let id = file[1].split(`.`)[0]
 
-        switch (Platform) {
-            case `Twitter`:
-                for (file of InputStrs) {
-                    let account = file[0]
-                    let id = file[1].split(`.`)[0]
+                        let embPrefix = ``
+                        if (req.body.OptDiscordEmb) embPrefix = `fx`
+                        OutputURLs.push(`https://${embPrefix}twitter.com/${account}/status/${id}`)
+                    }
+                    break;
+                case `Tumblr`:
+                    for (file of InputStrs) {
+                        let account = file[0]
+                        let id = file[1].split(`.`)[0]
+                        OutputURLs.push(`https://tumblr.com/${account}/${id}`)
+                    }
+                    break;
+                case `Bluesky`:
+                    for (file of InputStrs) {
+                        let account = file[0]
+                        let id = file[1].split(`.`)[0]
+                        OutputURLs.push(`https://bsky.app/profile/${account}.bsky.social/post/${id}`)
+                    }
+                    break;
+                case `Threads`:
+                    for (file of InputStrs) {
+                        let account = file[0]
+                        let id = file[1].split(`.`)[0]
+                        OutputURLs.push(`https://www.threads.net/${account}/post/${id}`)
+                    }
+                    break;
+                case `Instagram`:
+                    for (file of InputStrs) {
+                        let id = file[1].split(`.`)[0]
 
-                    let embPrefix = ``
-                    if (req.body.OptDiscordEmb) embPrefix = `fx`
-                    OutputURLs.push(`https://${embPrefix}twitter.com/${account}/status/${id}`)
-                }
-                break;
-            case `Tumblr`:
-                for (file of InputStrs) {
-                    let account = file[0]
-                    let id = file[1].split(`.`)[0]
-                    OutputURLs.push(`https://tumblr.com/${account}/${id}`)
-                }
-                break;
-            case `Bluesky`:
-                for (file of InputStrs) {
-                    let account = file[0]
-                    let id = file[1].split(`.`)[0]
-                    OutputURLs.push(`https://bsky.app/profile/${account}.bsky.social/post/${id}`)
-                }
-                break;
-            case `Threads`:
-                for (file of InputStrs) {
-                    let account = file[0]
-                    let id = file[1].split(`.`)[0]
-                    OutputURLs.push(`https://www.threads.net/${account}/post/${id}`)
-                }
-                break;
-            case `Instagram`:
-                for (file of InputStrs) {
-                    let id = file[1].split(`.`)[0]
+                        let embPrefix = ``
+                        if (req.body.OptDiscordEmb) embPrefix = `dd`
+                        OutputURLs.push(`https://www.${embPrefix}instagram.com/p/${id}`)
+                    }
+                    break;
+                case `Newgrounds`:
+                    for (file of InputStrs) {
+                        let account = file[0]
+                        let postName = file[1].split(`.`)[0]
+                        OutputURLs.push(`https://www.newgrounds.com/art/view/${account}/${postName}`)
+                    }
+                    break;
+                case `Reddit`:
+                    for (file of InputStrs) {
+                        let subreddit = file[1]
+                        let id = file[2]
+                        let postName = file[3].split(`.`)[0]
+                        OutputURLs.push(`https://www.reddit.com/r/${subreddit}/comments/${id}/${postName}`)
+                    }
+                    break;
+                case `DeviantArt`:
+                    for (file of InputStrs) {
+                        let account = file[0]
+                        let postName = file[1]
+                        let id = file[2].split(`.`)[0]
+                        OutputURLs.push(`https://www.deviantart.com/${account}/art/${postName}-${id}`)
+                    }
+                    break;
+                case `Pixiv`:
+                    for (file of InputStrs) {
+                        let id = file[0]
+                        let embPrefix = ``
+                        if (req.body.OptDiscordEmb) embPrefix = `h`
+                        OutputURLs.push(`https://www.p${embPrefix}ixiv.net/en/artworks/${id}`)
+                    }
+                    break;
+                case `FurAffinity`:
+                    for (file of InputStrs) {
+                        let id = file[0]
+                        OutputURLs.push(`https://www.furaffinity.net/view/${id}`)
+                    }
+                    break;
+                case `Pillowfort`:
+                    for (file of InputStrs) {
+                        let id = file[1].split(`.`)[0]
+                        OutputURLs.push(`https://www.pillowfort.social/posts/${id}`)
+                    }
+                    break;
+            }
+            res.send(FileName_Url_Helper(OutputURLs, true))
 
-                    let embPrefix = ``
-                    if (req.body.OptDiscordEmb) embPrefix = `dd`
-                    OutputURLs.push(`https://www.${embPrefix}instagram.com/p/${id}`)
-                }
-                break;
-            case `Newgrounds`:
-                for (file of InputStrs) {
-                    let account = file[0]
-                    let postName = file[1].split(`.`)[0]
-                    OutputURLs.push(`https://www.newgrounds.com/art/view/${account}/${postName}`)
-                }
-                break;
-            case `Reddit`:
-                for (file of InputStrs) {
-                    let subreddit = file[1]
-                    let id = file[2]
-                    let postName = file[3].split(`.`)[0]
-                    OutputURLs.push(`https://www.reddit.com/r/${subreddit}/comments/${id}/${postName}`)
-                }
-                break;
-            case `DeviantArt`:
-                for (file of InputStrs) {
-                    let account = file[0]
-                    let postName = file[1]
-                    let id = file[2].split(`.`)[0]
-                    OutputURLs.push(`https://www.deviantart.com/${account}/art/${postName}-${id}`)
-                }
-                break;
-            case `Pixiv`:
-                for (file of InputStrs) {
-                    let id = file[0]
-                    let embPrefix = ``
-                    if (req.body.OptDiscordEmb) embPrefix = `h`
-                    OutputURLs.push(`https://www.p${embPrefix}ixiv.net/en/artworks/${id}`)
-                }
-                break;
-            case `FurAffinity`:
-                for (file of InputStrs) {
-                    let id = file[0]
-                    OutputURLs.push(`https://www.furaffinity.net/view/${id}`)
-                }
-                break;
-            case `Pillowfort`:
-                for (file of InputStrs) {
-                    let id = file[1].split(`.`)[0]
-                    OutputURLs.push(`https://www.pillowfort.social/posts/${id}`)
-                }
-                break;
+        } else if (Option === `URL_to_FileName`) {
+            let OutputFileNames = []
+            InputStrs = InputStrs.map(str => str.split(`/`))
+
+            switch (Platform) {
+                case `Twitter`:
+                    for (url of InputStrs) {
+                        let account = url[1]
+                        let id = url[3].split(`?`)[0]
+                        OutputFileNames.push(`${account}-${id}-TWITTER`)
+                    }
+                    break;
+                case `Tumblr`:
+                    for (url of InputStrs) {
+                        let account = url[1]
+                        let id = url[2].split(`?`)[0]
+                        OutputFileNames.push(`${account}-${id}-TUMBLR`)
+                    }
+                    break;
+                case `Bluesky`:
+                    for (url of InputStrs) {
+                        let account = url[2].split(`.`)[0]
+                        let id = url[4]
+                        OutputFileNames.push(`${account}-${id}-BLUESKY`)
+                    }
+                    break;
+                case `Threads`:
+                    for (url of InputStrs) {
+                        let account = url[1]
+                        let id = url[3]
+                        OutputFileNames.push(`${account}-${id}-THREADS`)
+                    }
+                    break;
+                case `Instagram`:
+                    for (url of InputStrs) {
+                        let id = url[2]
+                        let CustomAccName = req.body.CustomAccName
+                        OutputFileNames.push(`${CustomAccName}~IG~${id}~IG~INSTAGRAM`)
+                    }
+                    break;
+                case `Newgrounds`:
+                    for (url of InputStrs) {
+                        let account = url[3]
+                        let postName = url[4]
+                        OutputFileNames.push(`${account}~NG~${postName}~NG~NEWGROUNDS`)
+                    }
+                    break;
+                case `Reddit`:
+                    for (url of InputStrs) {
+                        let subreddit = url[2]
+                        let id = url[4]
+                        let postName = url[5]
+                        let CustomAccName = req.body.CustomAccName
+                        OutputFileNames.push(`${CustomAccName}-${subreddit}-${id}-${postName}-REDDIT`)
+                    }
+                    break;
+                case `DeviantArt`:
+                    for (url of InputStrs) {
+                        let account = url[1]
+                        let postName = url[3].split(`-`)[0]
+                        let id = url[3].split(`-`)[1]
+                        OutputFileNames.push(`${account}-${postName}-${id}-DEVIANTART`)
+                    }
+                    break;
+                case `Pixiv`:
+                    for (url of InputStrs) {
+                        let id = url[3]
+                        let CustomAccName = req.body.CustomAccName
+                        OutputFileNames.push(`${id}_${CustomAccName}_PIXIV`)
+                    }
+                    break;
+                case `FurAffinity`:
+                    for (url of InputStrs) {
+                        let id = url[2]
+                        let CustomAccName = req.body.CustomAccName
+                        OutputFileNames.push(`${id}.${CustomAccName}.FURAFFINITY`)
+                    }
+                    break;
+                case `Pillowfort`:
+                    for (url of InputStrs) {
+                        let id = url[2]
+                        let CustomAccName = req.body.CustomAccName
+                        OutputFileNames.push(`${CustomAccName}-${id}-PILLOWFORT`)
+                    }
+                    break;
+            }
+            res.send(FileName_Url_Helper(OutputFileNames, false))
         }
-        res.send(FileName_Url_Helper(OutputURLs, true))
-
-    } else if (Option === `URL_to_FileName`) {
-        let OutputFileNames = []
-        InputStrs = InputStrs.map(str => str.split(`/`))
-
-        switch (Platform) {
-            case `Twitter`:
-                for (url of InputStrs) {
-                    let account = url[1]
-                    let id = url[3].split(`?`)[0]
-                    OutputFileNames.push(`${account}-${id}-TWITTER`)
-                }
-                break;
-            case `Tumblr`:
-                for (url of InputStrs) {
-                    let account = url[1]
-                    let id = url[2].split(`?`)[0]
-                    OutputFileNames.push(`${account}-${id}-TUMBLR`)
-                }
-                break;
-            case `Bluesky`:
-                for (url of InputStrs) {
-                    let account = url[2].split(`.`)[0]
-                    let id = url[4]
-                    OutputFileNames.push(`${account}-${id}-BLUESKY`)
-                }
-                break;
-            case `Threads`:
-                for (url of InputStrs) {
-                    let account = url[1]
-                    let id = url[3]
-                    OutputFileNames.push(`${account}-${id}-THREADS`)
-                }
-                break;
-            case `Instagram`:
-                for (url of InputStrs) {
-                    let id = url[2]
-                    let CustomAccName = req.body.CustomAccName
-                    OutputFileNames.push(`${CustomAccName}~IG~${id}~IG~INSTAGRAM`)
-                }
-                break;
-            case `Newgrounds`:
-                for (url of InputStrs) {
-                    let account = url[3]
-                    let postName = url[4]
-                    OutputFileNames.push(`${account}~NG~${postName}~NG~NEWGROUNDS`)
-                }
-                break;
-            case `Reddit`:
-                for (url of InputStrs) {
-                    let subreddit = url[2]
-                    let id = url[4]
-                    let postName = url[5]
-                    let CustomAccName = req.body.CustomAccName
-                    OutputFileNames.push(`${CustomAccName}-${subreddit}-${id}-${postName}-REDDIT`)
-                }
-                break;
-            case `DeviantArt`:
-                for (url of InputStrs) {
-                    let account = url[1]
-                    let postName = url[3].split(`-`)[0]
-                    let id = url[3].split(`-`)[1]
-                    OutputFileNames.push(`${account}-${postName}-${id}-DEVIANTART`)
-                }
-                break;
-            case `Pixiv`:
-                for (url of InputStrs) {
-                    let id = url[3]
-                    let CustomAccName = req.body.CustomAccName
-                    OutputFileNames.push(`${id}_${CustomAccName}_PIXIV`)
-                }
-                break;
-            case `FurAffinity`:
-                for (url of InputStrs) {
-                    let id = url[2]
-                    let CustomAccName = req.body.CustomAccName
-                    OutputFileNames.push(`${id}.${CustomAccName}.FURAFFINITY`)
-                }
-                break;
-            case `Pillowfort`:
-                for (url of InputStrs) {
-                    let id = url[2]
-                    let CustomAccName = req.body.CustomAccName
-                    OutputFileNames.push(`${CustomAccName}-${id}-PILLOWFORT`)
-                }
-                break;
-        }
-        res.send(FileName_Url_Helper(OutputFileNames, false))
+    } catch (e) {
+        res.send(`
+            <body style='font-family: arial; word-wrap: break-word'>
+            <h1 style='color:red'>Invalid Input</h1>
+            <p>Ensure that your file names adhere to the valid format for your specified platform.</p>
+            ${ReturnToFormBtn}
+            <pre>${JSON.stringify(req.body, null, 2)}</pre>
+            </body>`)
     }
 })
 
@@ -905,8 +914,8 @@ app.route(`/UrlCleaner`).post((req, res) => {
             break;
     }
     res.send(`<body style='font-family: arial; word-wrap: break-word'>
-    <a href="${newURL}">${newURL}</a>
     ${ReturnToFormBtn}
+    <a href="${newURL}">${newURL}</a>
     </body>`)
 })
 
