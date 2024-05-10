@@ -876,12 +876,12 @@ app.route(`/ChangeLetterCase`).post((req, res) => {
     if (req.body.UnderDelim) delimiters.push(`_`)
     if (req.body.CustomDelims) {
         let customDelims = req.body.CustomDelims.split(`\r\n`)
-        delimiters = delimiters.concat(customDelims)
+        for (d of customDelims) if (d !== ``) delimiters.push(d)
     }
 
     let newStr = ` `
 
-    if (!req.body.TextToChange || (req.body.SelectedOperation === `Capitalize First Letters` && !req.body.CustomDelims)) { res.send(incompleteForm(req)); return }
+    if (!req.body.TextToChange) { res.send(incompleteForm(req)); return }
 
     for (let i = 0; i < str.length; i++) {
         switch (req.body.SelectedOperation) {
