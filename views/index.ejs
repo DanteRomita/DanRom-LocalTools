@@ -17,7 +17,7 @@
     <!-- START OF GENERAL CSS -->
     <style>
         body {
-            font-family: arial;
+            font-family: liberation mono;
             word-wrap: break-word;
             overflow-y: scroll;
         }
@@ -37,6 +37,7 @@
 
             resize: vertical;
             width: 100%;
+            font-size: small;
         }
 
         legend {
@@ -109,7 +110,7 @@
 
         /* (X) DOES NOT MATTER */
         * {
-            font-family: arial, sans-serif;
+            font-family: liberation mono;;
             box-sizing: border-box;
         }
     </style>
@@ -304,7 +305,7 @@
                 Enter the <b>full names of all files WITH file extensions</b> to included/excluded below. Selecting
                 <b>All Items In Folder</b> will ignore this input and default to including all with file extensions in
                 the chosen folder.
-                <textarea class="textInput" name="IncExc_Items" rows="6"></textarea>
+                <textarea class="textInput" name="IncExc_Items" rows="5"></textarea>
             </p>
 
             <h3>Power Options When Complete</h3>
@@ -338,11 +339,11 @@
                     Enter the names of the input files <b>including file extensions</b> below:<br>
                     (Note: The file extensions for the input and output files must be the same for this step to
                     work.)<br>
-                    <textarea class="textInput" name="InputFileNames" rows="6"></textarea>
+                    <textarea class="textInput" name="InputFileNames" rows="10"></textarea>
                 </p>
                 <p>
                     Enter the desired names of the output files <b>including file extensions</b> below:<br>
-                    <textarea class="textInput" name="OutputFileNames" rows="6"></textarea>
+                    <textarea class="textInput" name="OutputFileNames" rows="10"></textarea>
                 </p>
 
                 <hr>
@@ -357,12 +358,12 @@
 
                 <p>
                     Enter start times:<br>
-                    <textarea class="textInput" name="StartTimes" rows="6"></textarea>
+                    <textarea class="textInput" name="StartTimes" rows="10"></textarea>
                 </p>
 
                 <p>
                     Enter end times:<br>
-                    <textarea class="textInput" name="EndTimes" rows="6"></textarea>
+                    <textarea class="textInput" name="EndTimes" rows="10"></textarea>
                 </p>
             </fieldset>
 
@@ -377,21 +378,30 @@
             </fieldset>
 
             <fieldset>
+                <input type="checkbox" name="CopyVideoCodec" id="CopyVideoCodec">
+                <label for="CopyVideoCodec">Copy Video Codec?</label>
+                <input type="checkbox" name="CopyAudioCodec" id="CopyAudioCodec">
+                <label for="CopyAudioCodec">Copy Audio Codec?</label>
+
+                <p><b>NOTE: </b>Selecting these options will cause the following options to be ignored:</p>
+                <ul>
+                    <li>Custom Resolution (Affects Video Only)</li>
+                    <li>Reverse Media</li>
+                </ul>
+            </p>
+            </fieldset>
+
+            <fieldset>
                 <input type="checkbox" name="UseCustomBitrate" id="UseCustomBitrate">
                 <label for="UseCustomBitrate">Custom Bitrate?</label>
-
-                <p>
-                    <input type="number" min="0" name="CustomBitrate"> kbps
-                </p>
+                <input type="number" min="0" name="CustomBitrate"> kbps
+                
             </fieldset>
 
             <fieldset>
                 <input type="checkbox" name="UseCustomFramerate" id="UseCustomFramerate">
                 <label for="UseCustomFramerate">Custom Framerate?</label>
-
-                <p>
                     <input type="number" min="0" name="CustomFramerate"> FPS
-                </p>
             </fieldset>
 
             <fieldset>
@@ -399,7 +409,7 @@
                 <label for="UseCustomResolution">Custom Resolution?</label>
 
                 <fieldset>
-                    <p>
+                    
                         <input type="radio" name="TypeOfScaling" id="16x9_AspectRatios" value="16x9" checked>
                         <label for="16x9_AspectRatios">Use 16x9 Aspect Ratio For Down-Scaling: </label>
 
@@ -411,19 +421,18 @@
                             <option value="384:216">384 x 216 (216p)</option>
                             <option value="256:144">256 x 144 (144p)</option>
                         </select>
-                    </p>
+                    
 
                 </fieldset>
 
                 <fieldset>
-                    <p>
                         <input type="radio" name="TypeOfScaling" id="CustomScaling" value="CustomScaling">
                         <label for="CustomScaling">Use Custom Scaling</label>
-                    </p>
                     <p>
                         Select the scaling algorithm you prefer:
 
                         <select name="ScaleType">
+                            <option value="None">None</option>
                             <option value="fast_bilinear">fast_bilinear</option>
                             <option value="bilinear">bilinear</option>
                             <option value="bicubic">bicubic</option>

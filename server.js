@@ -19,35 +19,9 @@ const finalLine = `\necho 'COMPLETE!'`
 const YTDLP_Path = `___YT-DLP`
 const FFMPEG_Path = `___FFMPEG`
 
-// const LoopMedia_Path = `_LoopMedia`
-// const ReverseMedia_Path = `_ReverseMedia`
-// const ReduceMedia_Path = `_ReduceMediaDimensions`
-// const ListedFilesInFolder_Path = `_ListedFilesInFolder`
-// const ListSubFolders_Path = `_ListSubFolders`
-// const ReduceFPS_Path = `_ReduceFPS`
-// const ScaleMedia_Path = `_ScaleMedia`
-// const ConvertOptimizedMedia_Path = `_ConvertOptimizedMedia`
-// const TrimMedia_Path = `_TrimMedia`
-// const GenerateProxyMedia_Path = `_GenerateProxyMedia`
-// const OptimizeMedia_Path = `_OptimizeMedia`
-// const AdjustAudio_Path = `_AdjustAudio`
-
 //-----File To Always Keep-----//
 
 const FilesToAlwaysKeep = [
-    // Base Folders
-    // `_AdjustAudio`,
-    // `_ConvertOptimizedMedia`,
-    // `_GenerateProxyMedia`,
-    // `_ListedFilesInFolder`,
-    // `_ListSubFolders`,
-    // `_LoopMedia`,
-    // `_OptimizeMedia`,
-    // `_ReduceFPS`,
-    // `_ReduceMediaDimensions`,
-    // `_ReverseMedia`,
-    // `_ScaleMedia`,
-    // `_TrimMedia`,
     `___YT-DLP`,
     `___FFMPEG`,
     `.git`,
@@ -100,10 +74,10 @@ const dirPathsToMake = [
 
 for (dirPath of dirPathsToMake) makeDir(dirPath)
 
-const ReturnToFormBtn = `<p><button style='font-size: large; user-select: none' onclick="window.history.back();">Return to Form</button></p>`
+const ReturnToFormBtn = `<p><button style='font-size: large; font-family: liberation mono; user-select: none' onclick="window.history.back();">Return to Form</button></p>`
 function scriptSuccessMessage(path, fileName) {
     return `
-    <body style='font-family: arial; word-wrap: break-word'>
+    <body style='font-family: liberation mono; word-wrap: break-word'>
         <h1 style='color:green'>Script Successfully Created!</h1>
         <p>Navigate to the <b>${path}</b> folder in the project to find the <b>${fileName}</b> file.</p>
         <p><b style='color: red'>If you're not entirely sure about the script's contents, make sure to check its contents before running it!</b></p>
@@ -114,7 +88,7 @@ function scriptSuccessMessage(path, fileName) {
 
 function removeNonASCIISuccessMessage(path) {
     return `
-    <body style='font-family: arial; word-wrap: break-word'>
+    <body style='font-family: liberation mono; word-wrap: break-word'>
         <h1 style='color:green'>All Non-ASCII Characters Removed!</h1>
         <p>All non-ASCII characters have been removed from the <b>${path}</b> folder.</p>
         ${ReturnToFormBtn}
@@ -124,7 +98,7 @@ function removeNonASCIISuccessMessage(path) {
 
 function incompleteForm(req) {
     return `
-    <body style='font-family: arial; word-wrap: break-word'>
+    <body style='font-family: liberation mono; word-wrap: break-word'>
         <h1 style='color:orange'>Incomplete Form</h1>
         ${ReturnToFormBtn}
         <h2>Form Data Submitted</h2>
@@ -202,7 +176,7 @@ function ytdlpHelper(Thumbnail, Subtitles, Comments) {
 }
 
 function FileName_Url_Helper(outputStrs, isURL) {
-    let outputHTMLstr = `<body style='font-family: arial; word-wrap: break-word'>${ReturnToFormBtn}`
+    let outputHTMLstr = `<body style='font-family: liberation mono; word-wrap: break-word'>${ReturnToFormBtn}`
 
     if (isURL) for (str of outputStrs) outputHTMLstr += `<fieldset><a href='${str}'>${str}</a></fieldset>`
     else for (str of outputStrs) outputHTMLstr += `<fieldset>${str}</fieldset>`
@@ -258,16 +232,6 @@ app.route(`/`).get((req, res) => {
         // Path Values
         YTDLP_Path: YTDLP_Path,
         FFMPEG_Path: FFMPEG_Path,
-        // LoopMedia_Path: LoopMedia_Path,
-        // ReverseMedia_Path: ReverseMedia_Path,
-        // ReduceMedia_Path: ReduceMedia_Path,
-        // ReduceFPS_Path: ReduceFPS_Path,
-        // ScaleMedia_Path: ScaleMedia_Path,
-        // ConvertOptimizedMedia_Path: ConvertOptimizedMedia_Path,
-        // TrimMedia_Path: TrimMedia_Path,
-        // GenerateProxyMedia_Path: GenerateProxyMedia_Path,
-        // OptimizeMedia_Path: OptimizeMedia_Path,
-        // AdjustAudio_Path: AdjustAudio_Path
     })
 })
 
@@ -485,6 +449,8 @@ if ($file1Exists -and $file2Exists) {
             let IncExc_Items = req.body.IncExc_Items.split(`\r\n`).filter(item => item !== '');
             let PowerOp = req.body.PowerOp;
             let OutputExtensions = req.body.OutputExtensions.split(`\r\n`).filter(item => item !== '');
+            let CopyVideoCodec = req.body.CopyVideoCodec;
+            let CopyAudioCodec = req.body.CopyAudioCodec;
             let CustomBitrate = req.body.CustomBitrate;
             let CustomFramerate = req.body.CustomFramerate;
             let TypeOfScaling = req.body.TypeOfScaling;
@@ -507,7 +473,7 @@ if ($file1Exists -and $file2Exists) {
                 // Check if input lengths are equal for all text areas
                 if (InputFileNames.length !== OutputFileNames.length || InputFileNames.length !== StartTimes.length || InputFileNames.length !== EndTimes.length) {
                     res.send(`
-                    <body style='font-family: arial; word-wrap: break-word'>
+                    <body style='font-family: liberation mono; word-wrap: break-word'>
                         <h1 style='color:red'>Invalid Input</h1>
                         <p>The number of InputFileNames, OutputFileNames, StartTimes, and EndTimes must be the same.</p>
                         ${ReturnToFormBtn}
@@ -521,7 +487,7 @@ if ($file1Exists -and $file2Exists) {
                 for (let i = 0; i < InputFileNames.length; i++) {
                     if (InputFileNames[i] === OutputFileNames[i]) {
                         res.send(`
-                        <body style='font-family: arial; word-wrap: break-word'>
+                        <body style='font-family: liberation mono; word-wrap: break-word'>
                             <h1 style='color:red'>Invalid Input</h1>
                             <p>The file's input name cannot be the same as its output name.</p>
                             ${ReturnToFormBtn}
@@ -535,13 +501,6 @@ if ($file1Exists -and $file2Exists) {
                 for (let i = 0; i < InputFileNames.length; i++) {
                     commandStr += `ffmpeg -ss "${StartTimes[i]}" -to "${EndTimes[i]}" -i "${InputFileNames[i].replaceAll(`$`, `\`$`)}" -vcodec copy -acodec copy "${OutputFileNames[i].replaceAll(`$`, `\`$`)}"\n`
                 }
-
-                // if (req.body.MarkOption === `MarkInput`) {
-                //     for (let i = 0; i < InputFileNames.length; i++) {
-                //         commandStr += `Rename-Item -LiteralPath "${InputFileNames[i].replaceAll(`$`, `\`$`)}" -NewName "_____${marker} ${InputFileNames[i].replaceAll(`$`, `\`$`)}"\n`
-                //     }
-                //     inputFilesMarked = true
-                // }
             }
 
             let selectedFiles
@@ -550,6 +509,9 @@ if ($file1Exists -and $file2Exists) {
 
             // Handle modification parameters for output files
             let modifications = ``
+
+            if (CopyVideoCodec) modifications += `-c:v copy `
+            if (CopyAudioCodec) modifications += `-c:a copy `
 
             let loopStr = ``
             if (req.body.LoopMedia && NumLoops !== ``) loopStr += `-stream_loop ${NumLoops}`
@@ -560,7 +522,9 @@ if ($file1Exists -and $file2Exists) {
             if (req.body.UseCustomResolution && TypeOfScaling === `16x9`) vfFilters += `scale=${Preset_16x9_Dimensions},`
 
             if (req.body.UseCustomResolution && TypeOfScaling === `CustomScaling` && ScaleMultiplier !== ``) {
-                vfFilters += `scale=iw*${ScaleMultiplier}:ih*${ScaleMultiplier}:-1:flags=${ScaleType},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse,`
+                // vfFilters += `scale=iw*${ScaleMultiplier}:ih*${ScaleMultiplier}:-1:flags=${ScaleType},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse,`
+                vfFilters += `scale=iw*${ScaleMultiplier}:ih*${ScaleMultiplier}:-1`
+                if (ScaleType !== `None`) vfFilters += `:flags=${ScaleType}`
             }
 
             if (ReverseMedia) {
@@ -575,9 +539,9 @@ if ($file1Exists -and $file2Exists) {
             let vfStr = `-vf "${vfFilters}" `
             let afStr = `-af "${afFilters}" `
 
-            if (vfFilters != ``) modifications += vfStr
+            if (!CopyVideoCodec && vfFilters != ``) modifications += vfStr
             // Always add -af loudnorm, and only add areverse if ReverseMedia is true
-            modifications += afStr
+            if (!CopyAudioCodec) modifications += afStr
 
             if (req.body.UseCustomBitrate && CustomBitrate !== ``) modifications += `-b:v ${CustomBitrate}k -bufsize ${CustomBitrate}k `
             if (req.body.UseCustomFramerate && CustomFramerate !== ``) modifications += `-r ${CustomFramerate} `
@@ -598,31 +562,15 @@ if ($file1Exists -and $file2Exists) {
                             commandStr += `ffmpeg ${loopStr} -i "${inFile}" ${modifications} "${outFile}"\n`
                             // finalExt = ext
                         }
-                        // if (MarkOption !== `None`) commandStr += handleMarking(inFile, outFile, fileName, MarkOption, finalExt)
                     } else {    // Use input file extension
                         let ext = inFile.split(`.`).pop();
 
                         if (req.body.AppendToEnd) outFile = `${inFile} (OUTPUT).${ext}`
                         else outFile = `(OUTPUT) ${inFile}`
                         commandStr += `ffmpeg ${loopStr} -i "${inFile}" ${modifications} "${outFile}"\n`
-
-                        // if (MarkOption !== `None`) commandStr += handleMarking(inFile, fileName, MarkOption)
                     }
                 }
             }
-
-            //             // Final pass of any files not properly renamed
-            //             if (MarkOption !== `None`) commandStr += `
-            // $files = Get-ChildItem -LiteralPath "${pathToUse}" -File
-            // foreach ($file in $files) {
-            //     # Check if the file name contains '(OUTPUT)'
-            //     if ($file.Name -like '*(OUTPUT)*') {
-            //         # Remove '(OUTPUT)' from the file name
-            //         $newName = $file.Name -replace '\\(OUTPUT\\) ', ''
-            //         # Rename the file
-            //         Rename-Item -Path $file.FullName -NewName $newName
-            //     }
-            // }\n`;
 
             // Finalize Script
             commandStr += powerOp(PowerOp);
@@ -639,7 +587,7 @@ app.route(`/RemoveLineBreaks`).post((req, res) => {
     if (req.body.TextToChange == ``) { res.send(incompleteForm(req)); return }
     let textToChange = req.body.TextToChange
     textToChange = textToChange.replaceAll(`\n`, ` `)
-    res.send(`<body style='font-family: arial; word-wrap: break-word'>
+    res.send(`<body style='font-family: liberation mono; word-wrap: break-word'>
     ${ReturnToFormBtn}
     <p>${textToChange}</p>
     </body>`)
@@ -848,7 +796,7 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
         }
     } catch (e) {
         res.send(`
-            <body style='font-family: arial; word-wrap: break-word'>
+            <body style='font-family: liberation mono; word-wrap: break-word'>
             <h1 style='color:red'>Invalid Input</h1>
             <p>Ensure that your file names adhere to the valid format for your specified platform.</p>
             ${ReturnToFormBtn}
@@ -879,7 +827,7 @@ app.route(`/RemoveNonASCII`).post((req, res) => {
     folderPathListStr = folderPathList.join(`<br>`)
 
     res.send(`
-    <body style='font-family: arial; word-wrap: break-word'>
+    <body style='font-family: liberation mono; word-wrap: break-word'>
     <h1 style='color:green'>Files Renamed!</h1>
     ${ReturnToFormBtn}
     <p>All files with Non-ASCII characters in them have been renamed accordingly in the following folders:</p>
@@ -913,7 +861,7 @@ app.route(`/UrlCleaner`).post((req, res) => {
             newURL = URLtoClean
             break;
     }
-    res.send(`<body style='font-family: arial; word-wrap: break-word'>
+    res.send(`<body style='font-family: liberation mono; word-wrap: break-word'>
     ${ReturnToFormBtn}
     <a href="${newURL}">${newURL}</a>
     </body>`)
@@ -969,7 +917,7 @@ app.route(`/ChangeLetterCase`).post((req, res) => {
         }
     }
 
-    res.send(`<body style='font-family: arial; word-wrap: break-word'>
+    res.send(`<body style='font-family: liberation mono; word-wrap: break-word'>
     ${ReturnToFormBtn}
     <fieldset>${newStr}</fieldset>
     </body>`)
@@ -981,7 +929,7 @@ app.route(`/Listify`).post((req, res) => {
     let TextToListify = req.body.TextToListify.replace(/\s+/g, ' ')
     let delimiter = req.body.Delimiter
     TextToListify = `- ${TextToListify.replaceAll(delimiter, `<br>- `)}`
-    res.send(`<body style='font-family: arial; word-wrap: break-word'>
+    res.send(`<body style='font-family: liberation mono; word-wrap: break-word'>
     ${ReturnToFormBtn}
     <fieldset>${TextToListify}</fieldset>
     </body>`)
