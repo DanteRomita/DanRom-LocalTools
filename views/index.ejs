@@ -17,16 +17,18 @@
     <!-- START OF GENERAL CSS -->
     <style>
         body {
-            font-family: liberation mono;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             word-wrap: break-word;
             overflow-y: scroll;
         }
 
         input {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: medium;
         }
 
         select {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: large;
         }
 
@@ -35,6 +37,7 @@
             -moz-box-sizing: border-box;
             box-sizing: border-box;
 
+            font-family: liberation mono;
             resize: vertical;
             width: 100%;
             font-size: small;
@@ -42,9 +45,11 @@
 
         legend {
             font-size: large;
+            font-weight: bold;
         }
 
         button {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             user-select: none;
         }
 
@@ -58,6 +63,7 @@
 
         .standardBtn {
             font-size: large;
+            font-weight: bold;
             margin-bottom: 4px;
         }
     </style>
@@ -110,7 +116,6 @@
 
         /* (X) DOES NOT MATTER */
         * {
-            font-family: liberation mono;;
             box-sizing: border-box;
         }
     </style>
@@ -122,7 +127,7 @@
         <legend>DanRom LocalTools</legend>
         <button class="standardBtn" style="background-color: red;" onclick="showForm('YT-DLP_GUI-FORM')">YT-DLP
             GUI</button>
-        <button class="standardBtn" style="background-color: green;" onclick="showForm('FFMPEG_GUI-FORM')">FFMPEG
+        <button class="standardBtn" style="background-color: greenyellow;" onclick="showForm('FFMPEG_GUI-FORM')">FFMPEG
             GUI</button>
         <button class="standardBtn" onclick="showForm('RemoveLineBreaks-FORM')">Remove Line Breaks</button>
 
@@ -134,7 +139,12 @@
         <button class="standardBtn" onclick="showForm('Listify-FORM')">Listify</button>
     </fieldset>
 
-    <p>📜 = Create Script | 📂 = Open Folder | 🔡 = Remove Non-ASCII Characters in Folder</p>
+    <ul>
+        <li>📜 = Create Script</li>
+        <li>📂 = Open Folder</li>
+        <li>🔡 = Remove Non-ASCII Characters in Folder</li>
+    </ul>
+
 
     <form action="/YT-DLP_GUI" method="POST" id="YT-DLP_GUI-FORM" style="display: none;">
         <fieldset>
@@ -245,7 +255,8 @@
             <p>
                 After generating all files, use these two buttons below to mark the media files accordingly. <b
                     style="color: orange">This will not work if the naming conventions for the files are changed!</b>
-                    These two buttons also leverage the <b style="color: orange">Include/Exclude Options</b>, so ensure you filter the files you do and don't want to rename!
+                These two buttons also leverage the <b style="color: orange">Include/Exclude Options</b>, so ensure you
+                filter the files you do and don't want to rename!
             </p>
             <p>
                 <input style="font-size: large" type="submit" name="MarkLargerFiles" value="Mark Larger Files">
@@ -388,20 +399,20 @@
                     <li>Custom Resolution (Affects Video Only)</li>
                     <li>Reverse Media</li>
                 </ul>
-            </p>
+                </p>
             </fieldset>
 
             <fieldset>
                 <input type="checkbox" name="UseCustomBitrate" id="UseCustomBitrate">
                 <label for="UseCustomBitrate">Custom Bitrate?</label>
                 <input type="number" min="0" name="CustomBitrate"> kbps
-                
+
             </fieldset>
 
             <fieldset>
                 <input type="checkbox" name="UseCustomFramerate" id="UseCustomFramerate">
                 <label for="UseCustomFramerate">Custom Framerate?</label>
-                    <input type="number" min="0" name="CustomFramerate"> FPS
+                <input type="number" min="0" name="CustomFramerate"> FPS
             </fieldset>
 
             <fieldset>
@@ -409,25 +420,25 @@
                 <label for="UseCustomResolution">Custom Resolution?</label>
 
                 <fieldset>
-                    
-                        <input type="radio" name="TypeOfScaling" id="16x9_AspectRatios" value="16x9" checked>
-                        <label for="16x9_AspectRatios">Use 16x9 Aspect Ratio For Down-Scaling: </label>
 
-                        <select name="Preset_16x9_Dimensions">
-                            <option value="1920:1080">1920 x 1080 (1080p)</option>
-                            <option value="1280:720">1280 x 720 (720p)</option>
-                            <option value="640:360">640 x 360 (360p)</option>
-                            <option value="512:288">512 x 288 (288p)</option>
-                            <option value="384:216">384 x 216 (216p)</option>
-                            <option value="256:144">256 x 144 (144p)</option>
-                        </select>
-                    
+                    <input type="radio" name="TypeOfScaling" id="16x9_AspectRatios" value="16x9" checked>
+                    <label for="16x9_AspectRatios">Use 16x9 Aspect Ratio For Down-Scaling: </label>
+
+                    <select name="Preset_16x9_Dimensions">
+                        <option value="1920:1080">1920 x 1080 (1080p)</option>
+                        <option value="1280:720">1280 x 720 (720p)</option>
+                        <option value="640:360">640 x 360 (360p)</option>
+                        <option value="512:288">512 x 288 (288p)</option>
+                        <option value="384:216">384 x 216 (216p)</option>
+                        <option value="256:144">256 x 144 (144p)</option>
+                    </select>
+
 
                 </fieldset>
 
                 <fieldset>
-                        <input type="radio" name="TypeOfScaling" id="CustomScaling" value="CustomScaling">
-                        <label for="CustomScaling">Use Custom Scaling</label>
+                    <input type="radio" name="TypeOfScaling" id="CustomScaling" value="CustomScaling">
+                    <label for="CustomScaling">Use Custom Scaling</label>
                     <p>
                         Select the scaling algorithm you prefer:
 
@@ -486,7 +497,8 @@
             <p>
                 After generating all files, use these two buttons below to mark the media files accordingly. <b
                     style="color: orange">This will not work if the naming conventions for the files are changed!</b>
-                    These two buttons also leverage the <b style="color: orange">Include/Exclude Options</b>, so ensure you filter the files you do and don't want to rename!
+                These two buttons also leverage the <b style="color: orange">Include/Exclude Options</b>, so ensure you
+                filter the files you do and don't want to rename!
             </p>
             <p>
                 <input style="font-size: large" type="submit" name="MarkLargerFiles" value="Mark Larger Files">
@@ -557,7 +569,8 @@
             </p>
             <p>
                 <b style="color: orange">Newgrounds:</b>
-                <i style="color: orange">~NG~</i> replaces the dash in the general format.
+                <i style="color: orange">~NG~</i> replaces the dash in the general format and the post's name is used
+                instead of an ID.
                 Newgrounds formats may not always work since the account name provided by the image isn't always
                 up-to-date.
             <ul>
@@ -587,13 +600,14 @@
             <ul>
                 <li>
                     <b>DeviantArt File Name Format: </b><b style="color: #00e59b">AccountName</b>-<b
-                        style="color: #00e59b">PostName</b>-<b style="color: #00e59b">ID</b>
+                        style="color: #00e59b">PostNameAndID</b>
                 </li>
             </ul>
             </p>
             <p>
                 <b style="color: dodgerblue">Pixiv:</b>
-                Only IDs matter, which must occur in the very beginning, followed by an underscore [ _ ].
+                Only IDs matter, with underscores as delimiters in the file name [ _ ]. Otherwise, the naming convention
+                is the same.
             <ul>
                 <li>
                     <b>Pixiv File Name Format: </b><b style="color: dodgerblue">ID</b>_AccountName_WhateverElse
@@ -602,7 +616,8 @@
             </p>
             <p>
                 <b style="color: brown">FurAffinity:</b>
-                Only IDs matter, which must occur in the very beginning, followed by a dot [ . ].
+                Only IDs matter, with periods as delimiters in the file name [ . ]. Otherwise, the naming convention is
+                the same.
                 <i style="color: brown">Also, the ID in the format below refers to the POST ID, not the image ID when
                     downloading an image from FurAffinity.
                     This design is intentional as it's the easiest way to identify the image author!</i>
@@ -654,8 +669,8 @@
                     <option value="Twitter">Twitter / X</option>
                     <option value="Tumblr">Tumblr</option>
                     <option value="Bluesky">Bluesky</option>
-                    <option value="Threads">Threads</option>
                     <option value="Instagram">Instagram</option>
+                    <option value="Threads">Threads</option>
                     <option value="Newgrounds">Newgrounds</option>
                     <option value="Reddit">Reddit</option>
                     <option value="DeviantArt">DeviantArt</option>
@@ -743,9 +758,9 @@
                 <p>{{textToChange.toLowerCase()}}</p>
             </fieldset>
             <p>
-                <input style="font-size: large" type="submit" name="SelectedOperation" class="standardBtn"
+                <input style="font-size: large" type="submit" name="SelectedOperation" 
                     value="Invert Case">
-                <input style="font-size: large" type="submit" name="SelectedOperation" class="standardBtn"
+                <input style="font-size: large" type="submit" name="SelectedOperation" 
                     value="Randomize Case">
             </p>
 

@@ -74,10 +74,10 @@ const dirPathsToMake = [
 
 for (dirPath of dirPathsToMake) makeDir(dirPath)
 
-const ReturnToFormBtn = `<p><button style='font-size: large; font-family: liberation mono; user-select: none' onclick="window.history.back();">Return to Form</button></p>`
+const ReturnToFormBtn = `<p><button style='font-size: large; user-select: none' onclick="window.history.back();">Return to Form</button></p>`
 function scriptSuccessMessage(path, fileName) {
     return `
-    <body style='font-family: liberation mono; word-wrap: break-word'>
+    <body style='word-wrap: break-word'>
         <h1 style='color:green'>Script Successfully Created!</h1>
         <p>Navigate to the <b>${path}</b> folder in the project to find the <b>${fileName}</b> file.</p>
         <p><b style='color: red'>If you're not entirely sure about the script's contents, make sure to check its contents before running it!</b></p>
@@ -88,7 +88,7 @@ function scriptSuccessMessage(path, fileName) {
 
 function removeNonASCIISuccessMessage(path) {
     return `
-    <body style='font-family: liberation mono; word-wrap: break-word'>
+    <body style='word-wrap: break-word'>
         <h1 style='color:green'>All Non-ASCII Characters Removed!</h1>
         <p>All non-ASCII characters have been removed from the <b>${path}</b> folder.</p>
         ${ReturnToFormBtn}
@@ -98,7 +98,7 @@ function removeNonASCIISuccessMessage(path) {
 
 function incompleteForm(req) {
     return `
-    <body style='font-family: liberation mono; word-wrap: break-word'>
+    <body style='word-wrap: break-word'>
         <h1 style='color:orange'>Incomplete Form</h1>
         ${ReturnToFormBtn}
         <h2>Form Data Submitted</h2>
@@ -176,7 +176,7 @@ function ytdlpHelper(Thumbnail, Subtitles, Comments) {
 }
 
 function FileName_Url_Helper(outputStrs, isURL) {
-    let outputHTMLstr = `<body style='font-family: liberation mono; word-wrap: break-word'>${ReturnToFormBtn}`
+    let outputHTMLstr = `<body style='word-wrap: break-word'>${ReturnToFormBtn}`
 
     if (isURL) for (str of outputStrs) outputHTMLstr += `<fieldset><a href='${str}'>${str}</a></fieldset>`
     else for (str of outputStrs) outputHTMLstr += `<fieldset>${str}</fieldset>`
@@ -473,7 +473,7 @@ if ($file1Exists -and $file2Exists) {
                 // Check if input lengths are equal for all text areas
                 if (InputFileNames.length !== OutputFileNames.length || InputFileNames.length !== StartTimes.length || InputFileNames.length !== EndTimes.length) {
                     res.send(`
-                    <body style='font-family: liberation mono; word-wrap: break-word'>
+                    <body style='word-wrap: break-word'>
                         <h1 style='color:red'>Invalid Input</h1>
                         <p>The number of InputFileNames, OutputFileNames, StartTimes, and EndTimes must be the same.</p>
                         ${ReturnToFormBtn}
@@ -487,7 +487,7 @@ if ($file1Exists -and $file2Exists) {
                 for (let i = 0; i < InputFileNames.length; i++) {
                     if (InputFileNames[i] === OutputFileNames[i]) {
                         res.send(`
-                        <body style='font-family: liberation mono; word-wrap: break-word'>
+                        <body style='word-wrap: break-word'>
                             <h1 style='color:red'>Invalid Input</h1>
                             <p>The file's input name cannot be the same as its output name.</p>
                             ${ReturnToFormBtn}
@@ -587,7 +587,7 @@ app.route(`/RemoveLineBreaks`).post((req, res) => {
     if (req.body.TextToChange == ``) { res.send(incompleteForm(req)); return }
     let textToChange = req.body.TextToChange
     textToChange = textToChange.replaceAll(`\n`, ` `)
-    res.send(`<body style='font-family: liberation mono; word-wrap: break-word'>
+    res.send(`<body style='word-wrap: break-word'>
     ${ReturnToFormBtn}
     <p>${textToChange}</p>
     </body>`)
@@ -614,6 +614,7 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
             let delimiter = `-`
             if (Platform === `Instagram`) delimiter = `~IG~`
             if (Platform === `Newgrounds`) delimiter = `~NG~`
+            if (Platform === `DeviantArt`) delimiter = `~DA~`
             if (Platform === `Pixiv`) delimiter = `_`
             if (Platform === `FurAffinity`) delimiter = `.`
 
@@ -678,14 +679,13 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
                 case `DeviantArt`:
                     for (file of InputStrs) {
                         let account = file[0]
-                        let postName = file[1]
-                        let id = file[2].split(`.`)[0]
-                        OutputURLs.push(`https://www.deviantart.com/${account}/art/${postName}-${id}`)
+                        let postNameAndId = file[1]
+                        OutputURLs.push(`https://www.deviantart.com/${account}/art/${postNameAndId}`)
                     }
                     break;
                 case `Pixiv`:
                     for (file of InputStrs) {
-                        let id = file[0]
+                        let id = file[1]
                         let embPrefix = ``
                         if (req.body.OptDiscordEmb) embPrefix = `h`
                         OutputURLs.push(`https://www.p${embPrefix}ixiv.net/en/artworks/${id}`)
@@ -758,30 +758,31 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
                         let subreddit = url[2]
                         let id = url[4]
                         let postName = url[5]
-                        let CustomAccName = req.body.CustomAccName
+                        
+                        let CustomAccName = `UnknownAccountName`
+                        if (req.body.CustomAccName) CustomAccName = `${req.body.CustomAccName}`
                         OutputFileNames.push(`${CustomAccName}-${subreddit}-${id}-${postName}-REDDIT`)
                     }
                     break;
                 case `DeviantArt`:
                     for (url of InputStrs) {
                         let account = url[1]
-                        let postName = url[3].split(`-`)[0]
-                        let id = url[3].split(`-`)[1]
-                        OutputFileNames.push(`${account}-${postName}-${id}-DEVIANTART`)
+                        let postNameAndId = url[3]
+                        OutputFileNames.push(`${account}~DA~${postNameAndId}`)
                     }
                     break;
                 case `Pixiv`:
                     for (url of InputStrs) {
                         let id = url[3]
                         let CustomAccName = req.body.CustomAccName
-                        OutputFileNames.push(`${id}_${CustomAccName}_PIXIV`)
+                        OutputFileNames.push(`$${CustomAccName}_${id}_PIXIV`)
                     }
                     break;
                 case `FurAffinity`:
                     for (url of InputStrs) {
                         let id = url[2]
                         let CustomAccName = req.body.CustomAccName
-                        OutputFileNames.push(`${id}.${CustomAccName}.FURAFFINITY`)
+                        OutputFileNames.push(`${CustomAccName}.${id}.FURAFFINITY`)
                     }
                     break;
                 case `Pillowfort`:
@@ -796,7 +797,7 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
         }
     } catch (e) {
         res.send(`
-            <body style='font-family: liberation mono; word-wrap: break-word'>
+            <body style='word-wrap: break-word'>
             <h1 style='color:red'>Invalid Input</h1>
             <p>Ensure that your file names adhere to the valid format for your specified platform.</p>
             ${ReturnToFormBtn}
@@ -827,7 +828,7 @@ app.route(`/RemoveNonASCII`).post((req, res) => {
     folderPathListStr = folderPathList.join(`<br>`)
 
     res.send(`
-    <body style='font-family: liberation mono; word-wrap: break-word'>
+    <body style='word-wrap: break-word'>
     <h1 style='color:green'>Files Renamed!</h1>
     ${ReturnToFormBtn}
     <p>All files with Non-ASCII characters in them have been renamed accordingly in the following folders:</p>
@@ -861,7 +862,7 @@ app.route(`/UrlCleaner`).post((req, res) => {
             newURL = URLtoClean
             break;
     }
-    res.send(`<body style='font-family: liberation mono; word-wrap: break-word'>
+    res.send(`<body style='word-wrap: break-word'>
     ${ReturnToFormBtn}
     <a href="${newURL}">${newURL}</a>
     </body>`)
@@ -917,7 +918,7 @@ app.route(`/ChangeLetterCase`).post((req, res) => {
         }
     }
 
-    res.send(`<body style='font-family: liberation mono; word-wrap: break-word'>
+    res.send(`<body style='word-wrap: break-word'>
     ${ReturnToFormBtn}
     <fieldset>${newStr}</fieldset>
     </body>`)
@@ -929,7 +930,7 @@ app.route(`/Listify`).post((req, res) => {
     let TextToListify = req.body.TextToListify.replace(/\s+/g, ' ')
     let delimiter = req.body.Delimiter
     TextToListify = `- ${TextToListify.replaceAll(delimiter, `<br>- `)}`
-    res.send(`<body style='font-family: liberation mono; word-wrap: break-word'>
+    res.send(`<body style='word-wrap: break-word'>
     ${ReturnToFormBtn}
     <fieldset>${TextToListify}</fieldset>
     </body>`)
