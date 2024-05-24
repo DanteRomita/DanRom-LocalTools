@@ -403,6 +403,17 @@
             </fieldset>
 
             <fieldset>
+                <input checked type="radio" name="AudioFilterOp" id="NormalizeAudio" value="NormalizeAudio">
+                <label for="NormalizeAudio">Normalize Audio?</label>
+                <input type="radio" name="AudioFilterOp" id="NoAudioFilters" value="NoAudioFilters">
+                <label for="NoAudioFilters">No Audio Filters?</label>
+                <input type="radio" name="AudioFilterOp" id="RemoveAudio" value="RemoveAudio">
+                <label for="RemoveAudio">Remove Audio?</label>
+
+                <p><b>NOTE: </b>These options will be ignored if "Copy Audio Codec" is selected.</p>
+            </fieldset>
+
+            <fieldset>
                 <input type="checkbox" name="UseCustomBitrate" id="UseCustomBitrate">
                 <label for="UseCustomBitrate">Custom Bitrate?</label>
                 <input type="number" min="0" name="CustomBitrate"> kbps

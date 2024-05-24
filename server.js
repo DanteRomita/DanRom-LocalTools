@@ -443,7 +443,6 @@ if ($file1Exists -and $file2Exists) {
             const fileName = `__FFMPEG_Script.ps1`
             // Initialization
 
-            // let MarkOption = req.body.MarkOption;
             let IncExc_Option = req.body.IncExc_Option
             if (req.body.TrimMedia) IncExc_Option = `All`;
             let IncExc_Items = req.body.IncExc_Items.split(`\r\n`).filter(item => item !== '');
@@ -517,7 +516,9 @@ if ($file1Exists -and $file2Exists) {
             if (req.body.LoopMedia && NumLoops !== ``) loopStr += `-stream_loop ${NumLoops}`
 
             let vfFilters = ``
-            let afFilters = `loudnorm,` // Always add -af loudnorm since it normalizes the audio
+            let afFilters = `` // Always add -af loudnorm since it normalizes the audio
+
+            if (req.body.AudioFilterOp === `NormalizeAudio`) afFilters += `loudnorm,`
 
             if (req.body.UseCustomResolution && TypeOfScaling === `16x9`) vfFilters += `scale=${Preset_16x9_Dimensions},`
 
@@ -540,8 +541,8 @@ if ($file1Exists -and $file2Exists) {
             let afStr = `-af "${afFilters}" `
 
             if (!CopyVideoCodec && vfFilters != ``) modifications += vfStr
-            // Always add -af loudnorm, and only add areverse if ReverseMedia is true
-            if (!CopyAudioCodec) modifications += afStr
+            if (req.body.AudioFilterOp === `RemoveAudio`) modifications += `-an `
+            else if (!CopyAudioCodec && afFilters != ``) modifications += afStr
 
             if (req.body.UseCustomBitrate && CustomBitrate !== ``) modifications += `-b:v ${CustomBitrate}k -bufsize ${CustomBitrate}k `
             if (req.body.UseCustomFramerate && CustomFramerate !== ``) modifications += `-r ${CustomFramerate} `
