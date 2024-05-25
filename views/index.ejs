@@ -220,11 +220,11 @@
             <h3>Power Options When Complete</h3>
 
             <input type="radio" name="PowerOp" id="PowerOp_None-YT-DLP" value="None" checked>
-            <label for="PowerOp_None-YT-DLP">None</label><br>
+            <label for="PowerOp_None-YT-DLP">None</label>
             <input type="radio" name="PowerOp" id="PowerOp_Hibernate-YT-DLP" value="Hibernate">
-            <label for="PowerOp_Hibernate-YT-DLP">Hibernate</label><br>
+            <label for="PowerOp_Hibernate-YT-DLP">Hibernate</label>
             <input type="radio" name="PowerOp" id="PowerOp_ShutDown-YT-DLP" value="Shut Down">
-            <label for="PowerOp_ShutDown-YT-DLP">Shut Down</label><br>
+            <label for="PowerOp_ShutDown-YT-DLP">Shut Down</label>
 
             <p>
                 <input style="font-size: x-large" type="submit" name="WriteScript" value="📜">
@@ -279,18 +279,11 @@
                 <b>WARNING! </b>Options other than "None" will rename your files!
             </p>
             -->
-            <h3>Custom Path Option</h3>
+            <h3>Custom Path</h3>
 
             <p>
-                To use a custom path, enter the <b>absolute</b> path of the folder below:
+                Enter the <b>absolute</b> path of the folder you want to generate the script in below. This field is mandatory:
                 <input class="textInput" name="CustomPath">
-            </p>
-
-            <p>
-                Otherwise, if the field above is left blank, generate the script <b>AFTER</b> placing the video files in
-                the <b>
-                    <%= FFMPEG_Path %>
-                </b> folder in the root of the project.
             </p>
 
             <h3>Append At End Option</h3>
@@ -305,9 +298,9 @@
             <p style="color:purple">If trimming media, these include/exclude options will be ignored entirely.</p>
             <p>
                 <input type="radio" id="IncExc_Option1" name="IncExc_Option" value="All" checked>
-                <label for="IncExc_Option1">All Items In Folder</label><br>
+                <label for="IncExc_Option1">All Items In Folder</label>
                 <input type="radio" id="IncExc_Option2" name="IncExc_Option" value="Include">
-                <label for="IncExc_Option2">Include Only Set Items</label><br>
+                <label for="IncExc_Option2">Include Only Set Items</label>
                 <input type="radio" id="IncExc_Option3" name="IncExc_Option" value="Exclude">
                 <label for="IncExc_Option3">Exclude Only Set Items</label>
             </p>
@@ -323,9 +316,9 @@
 
             <p>
                 <input type="radio" name="PowerOp" id="PowerOp_None" value="None" checked>
-                <label for="PowerOp_None">None</label><br>
+                <label for="PowerOp_None">None</label>
                 <input type="radio" name="PowerOp" id="PowerOp_Hibernate" value="Hibernate">
-                <label for="PowerOp_Hibernate">Hibernate</label><br>
+                <label for="PowerOp_Hibernate">Hibernate</label>
                 <input type="radio" name="PowerOp" id="PowerOp_ShutDown" value="Shut Down">
                 <label for="PowerOp_ShutDown">Shut Down</label>
             </p>
@@ -348,33 +341,32 @@
                 <hr>
                 <p>
                     Enter the names of the input files <b>including file extensions</b> below:<br>
-                    (Note: The file extensions for the input and output files must be the same for this step to
-                    work.)<br>
-                    <textarea class="textInput" name="InputFileNames" rows="10"></textarea>
+                    <textarea class="textInput" name="InputFileNames" rows="12"></textarea>
                 </p>
-                <p>
+                <!-- <p>
                     Enter the desired names of the output files <b>including file extensions</b> below:<br>
                     <textarea class="textInput" name="OutputFileNames" rows="10"></textarea>
-                </p>
+                </p> -->
 
                 <hr>
 
                 <p>
-                    Enter start and end times in one of the two formats below:
-                <ul>
-                    <li>HOURS:MM:SS.MILLISECONDS</li>
-                    <li>HOURS:MM:SS</li>
-                </ul>
+                    Enter start and end times in the format below. Milliseconds are optional.
+                <p>
+                    <code style="font-size: large"><b>HOURS:MINUTES:SECONDS</b>.MILLISECONDS</code>
+                    <br>
+                    <code style="font-size: large">Example: <b>01:23:45</b>.678</code>
+                </p>
                 </p>
 
                 <p>
                     Enter start times:<br>
-                    <textarea class="textInput" name="StartTimes" rows="10"></textarea>
+                    <textarea class="textInput" name="StartTimes" rows="12"></textarea>
                 </p>
 
                 <p>
                     Enter end times:<br>
-                    <textarea class="textInput" name="EndTimes" rows="10"></textarea>
+                    <textarea class="textInput" name="EndTimes" rows="12"></textarea>
                 </p>
             </fieldset>
 

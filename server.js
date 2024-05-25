@@ -79,7 +79,8 @@ function scriptSuccessMessage(path, fileName) {
     return `
     <body style='word-wrap: break-word'>
         <h1 style='color:green'>Script Successfully Created!</h1>
-        <p>Navigate to the <b>${path}</b> folder in the project to find the <b>${fileName}</b> file.</p>
+        <p>Navigate to the following folder to find the <b>${fileName}</b> file.</p>
+        <p><code style='font-size: large'>${path}</code></p>
         <p><b style='color: red'>If you're not entirely sure about the script's contents, make sure to check its contents before running it!</b></p>
         ${ReturnToFormBtn}
     </body>
@@ -185,34 +186,34 @@ function FileName_Url_Helper(outputStrs, isURL) {
     return outputHTMLstr
 }
 
-function handleMarkLarger(inFile, outFile, fileName, ext) {
-    let fileStr = ext ? `${removeExt(inFile)}.${ext}` : `${inFile}`
-    if (inFile !== fileName && !(FilesToAlwaysKeep.includes(inFile))) {
-        return `$inFile = Get-Item -LiteralPath "${inFile}"
-$outFile = Get-Item -LiteralPath "${outFile}"
-If ($inFile.Length -gt $outFile.Length) {
-    Rename-Item -LiteralPath "${inFile}" -NewName "_____LARGER ${inFile}"
-    Rename-Item -LiteralPath "${outFile}" -NewName "${fileStr}"
-}\n`
-    }
-}
+// function handleMarkLarger(inFile, outFile, fileName, ext) {
+//     let fileStr = ext ? `${removeExt(inFile)}.${ext}` : `${inFile}`
+//     if (inFile !== fileName && !(FilesToAlwaysKeep.includes(inFile))) {
+//         return `$inFile = Get-Item -LiteralPath "${inFile}"
+// $outFile = Get-Item -LiteralPath "${outFile}"
+// If ($inFile.Length -gt $outFile.Length) {
+//     Rename-Item -LiteralPath "${inFile}" -NewName "_____LARGER ${inFile}"
+//     Rename-Item -LiteralPath "${outFile}" -NewName "${fileStr}"
+// }\n`
+//     }
+// }
 
-function handleMarkInput(inFile, outFile, fileName, ext) {
-    if (inputFilesMarked) marker = `TEMP`
+// function handleMarkInput(inFile, outFile, fileName, ext) {
+//     if (inputFilesMarked) marker = `TEMP`
 
-    let fileStr = ext ? `${removeExt(inFile)}.${ext}` : `${inFile}`
-    if (inFile !== fileName && !(FilesToAlwaysKeep.includes(inFile))) {
-        return `Rename-Item -LiteralPath "${inFile}" -NewName "_____${marker} ${inFile}"
-        Rename-Item -LiteralPath "${outFile}" -NewName "${fileStr}"\n`
-    }
-}
+//     let fileStr = ext ? `${removeExt(inFile)}.${ext}` : `${inFile}`
+//     if (inFile !== fileName && !(FilesToAlwaysKeep.includes(inFile))) {
+//         return `Rename-Item -LiteralPath "${inFile}" -NewName "_____${marker} ${inFile}"
+//         Rename-Item -LiteralPath "${outFile}" -NewName "${fileStr}"\n`
+//     }
+// }
 
-function handleMarking(inFile, outFile, fileName, MarkOption, ext) {
-    let markingCommands = ``
-    if (MarkOption === `MarkLarger`) markingCommands = handleMarkLarger(inFile, outFile, fileName, ext)
-    if (MarkOption === `MarkInput`) markingCommands = handleMarkInput(inFile, outFile, fileName, ext)
-    return markingCommands
-}
+// function handleMarking(inFile, outFile, fileName, MarkOption, ext) {
+//     let markingCommands = ``
+//     if (MarkOption === `MarkLarger`) markingCommands = handleMarkLarger(inFile, outFile, fileName, ext)
+//     if (MarkOption === `MarkInput`) markingCommands = handleMarkInput(inFile, outFile, fileName, ext)
+//     return markingCommands
+// }
 
 //--END OF HELPER FUNCTIONS--//
 
@@ -337,9 +338,13 @@ app.route(`/FFMPEG_GUI`)
         // inputFilesMarked = false
         // marker = `INPUT`
 
-        let CustomPath = req.body.CustomPath;
-        let pathToUse = FFMPEG_Path
-        if (CustomPath !== ``) pathToUse = CustomPath.replaceAll(`"`, ``)
+        let pathToUse = req.body.CustomPath.replaceAll(`"`, ``);
+
+        if (pathToUse === ``) {
+            res.send(incompleteForm(req));
+            return
+        }
+
         let folderItems = fs.readdirSync(pathToUse)
 
         if (req.body.OpenDir) {
@@ -348,8 +353,8 @@ app.route(`/FFMPEG_GUI`)
         }
 
         else if (req.body.RemoveNonASCII) {
-            removeNonASCII(FFMPEG_Path);
-            res.send(removeNonASCIISuccessMessage(FFMPEG_Path));
+            removeNonASCII(pathToUse);
+            res.send(removeNonASCIISuccessMessage(pathToUse));
             return
         }
 
@@ -460,7 +465,12 @@ if ($file1Exists -and $file2Exists) {
             let ReverseMedia = req.body.ReverseMedia;
 
             let InputFileNames = req.body.InputFileNames.split(`\r\n`).filter(item => item !== '')
-            let OutputFileNames = req.body.OutputFileNames.split(`\r\n`).filter(item => item !== '');
+            let OutputFileNames = InputFileNames.map((fileName, index) => {
+                let parts = fileName.split('.');
+                let fileNameWithoutExtension = parts.slice(0, parts.length - 1).join('.');
+                let extension = parts[parts.length - 1];
+                return `(TRIMMED) ${fileNameWithoutExtension}~${index + 1}.${extension}`;
+              });
             let StartTimes = req.body.StartTimes.split(`\r\n`).filter(item => item !== '')
             let EndTimes = req.body.EndTimes.split(`\r\n`).filter(item => item !== '')
 
@@ -470,11 +480,11 @@ if ($file1Exists -and $file2Exists) {
             if (req.body.TrimMedia) {
 
                 // Check if input lengths are equal for all text areas
-                if (InputFileNames.length !== OutputFileNames.length || InputFileNames.length !== StartTimes.length || InputFileNames.length !== EndTimes.length) {
+                if (InputFileNames.length !== StartTimes.length || InputFileNames.length !== EndTimes.length) {
                     res.send(`
                     <body style='word-wrap: break-word'>
                         <h1 style='color:red'>Invalid Input</h1>
-                        <p>The number of InputFileNames, OutputFileNames, StartTimes, and EndTimes must be the same.</p>
+                        <p>The number of InputFileNames, StartTimes, and EndTimes must be the same.</p>
                         ${ReturnToFormBtn}
                         <pre>${JSON.stringify(req.body, null, 2)}</pre>
                     </body>
@@ -482,20 +492,20 @@ if ($file1Exists -and $file2Exists) {
                     return
                 }
 
-                // Check if input and output names are the same, returning with an invalid input message if they are
-                for (let i = 0; i < InputFileNames.length; i++) {
-                    if (InputFileNames[i] === OutputFileNames[i]) {
-                        res.send(`
-                        <body style='word-wrap: break-word'>
-                            <h1 style='color:red'>Invalid Input</h1>
-                            <p>The file's input name cannot be the same as its output name.</p>
-                            ${ReturnToFormBtn}
-                            <pre>${JSON.stringify(req.body, null, 2)}</pre>
-                        </body>
-                        `)
-                        break
-                    }
-                }
+                // // Check if input and output names are the same, returning with an invalid input message if they are
+                // for (let i = 0; i < InputFileNames.length; i++) {
+                //     if (InputFileNames[i] === OutputFileNames[i]) {
+                //         res.send(`
+                //         <body style='word-wrap: break-word'>
+                //             <h1 style='color:red'>Invalid Input</h1>
+                //             <p>The file's input name cannot be the same as its output name.</p>
+                //             ${ReturnToFormBtn}
+                //             <pre>${JSON.stringify(req.body, null, 2)}</pre>
+                //         </body>
+                //         `)
+                //         break
+                //     }
+                // }
 
                 for (let i = 0; i < InputFileNames.length; i++) {
                     commandStr += `ffmpeg -ss "${StartTimes[i]}" -to "${EndTimes[i]}" -i "${InputFileNames[i].replaceAll(`$`, `\`$`)}" -vcodec copy -acodec copy "${OutputFileNames[i].replaceAll(`$`, `\`$`)}"\n`
@@ -516,7 +526,7 @@ if ($file1Exists -and $file2Exists) {
             if (req.body.LoopMedia && NumLoops !== ``) loopStr += `-stream_loop ${NumLoops}`
 
             let vfFilters = ``
-            let afFilters = `` // Always add -af loudnorm since it normalizes the audio
+            let afFilters = ``
 
             if (req.body.AudioFilterOp === `NormalizeAudio`) afFilters += `loudnorm,`
 
@@ -525,8 +535,9 @@ if ($file1Exists -and $file2Exists) {
             if (req.body.UseCustomResolution && TypeOfScaling === `CustomScaling` && ScaleMultiplier !== ``) {
                 // vfFilters += `scale=iw*${ScaleMultiplier}:ih*${ScaleMultiplier}:-1:flags=${ScaleType},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse,`
                 vfFilters += `scale=iw*${ScaleMultiplier}:ih*${ScaleMultiplier}:-1`
-                if (ScaleType !== `None`) vfFilters += `:flags=${ScaleType}`
+                if (ScaleType !== `None`) vfFilters += `:flags=${ScaleType},`
             }
+            if (req.body.UseCustomResolution && OutputExtensions.includes(`gif`)) vfFilters += `split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse,`
 
             if (ReverseMedia) {
                 vfFilters += `reverse,`
@@ -802,7 +813,7 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
             <h1 style='color:red'>Invalid Input</h1>
             <p>Ensure that your file names adhere to the valid format for your specified platform.</p>
             ${ReturnToFormBtn}
-            <pre>${JSON.stringify(req.body, null, 2)}</pre>
+            <pre style='font-size: large'>${JSON.stringify(req.body, null, 2)}</pre>
             </body>`)
     }
 })
@@ -833,7 +844,7 @@ app.route(`/RemoveNonASCII`).post((req, res) => {
     <h1 style='color:green'>Files Renamed!</h1>
     ${ReturnToFormBtn}
     <p>All files with Non-ASCII characters in them have been renamed accordingly in the following folders:</p>
-    <fieldset><code>${folderPathListStr}</code></fieldset>
+    <fieldset><code style="font-size: large">${folderPathListStr}</code></fieldset>
     </body>`)
 })
 
