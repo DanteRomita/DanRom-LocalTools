@@ -17,13 +17,11 @@ const finalLine = `\necho 'COMPLETE!'`
 //-----Path Constants-----//
 
 const YTDLP_Path = `___YT-DLP`
-const FFMPEG_Path = `___FFMPEG`
 
 //-----File To Always Keep-----//
 
 const FilesToAlwaysKeep = [
     `___YT-DLP`,
-    `___FFMPEG`,
     `.git`,
     `.gitattributes`,
     `.gitignore`,
@@ -69,7 +67,6 @@ function openDir(dir, option) {
 }
 
 const dirPathsToMake = [
-    FFMPEG_Path
 ]
 
 for (dirPath of dirPathsToMake) makeDir(dirPath)
@@ -232,7 +229,6 @@ app.route(`/`).get((req, res) => {
 
         // Path Values
         YTDLP_Path: YTDLP_Path,
-        FFMPEG_Path: FFMPEG_Path,
     })
 })
 
