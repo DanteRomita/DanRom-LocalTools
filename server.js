@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //--BEGINNING OF VARIABLE INITIALIZATIONS--//
 
-const finalLine = `\necho 'COMPLETE!'`
+const finalLine = `\necho 'Reached End of Script'`
 
 //-----Path Constants-----//
 
@@ -48,6 +48,11 @@ const FilesToAlwaysKeep = [
 ]
 
 //--END OF VARIABLE INITIALIZATIONS--//
+
+//--BEGINNING OF CONFIG INITIALIZATIONS FROM CONFIG.JSON--//
+let CONFIG = {}
+if (fs.existsSync(`userConfig.json`)) CONFIG = JSON.parse(fs.readFileSync(`userConfig.json`))
+else CONFIG = JSON.parse(fs.readFileSync(`defaultConfig.json`))
 
 //--BEGINNING OF HELPER FUNCTIONS--//
 
@@ -100,7 +105,7 @@ function incompleteForm(req) {
         <h1 style='color:orange'>Incomplete Form</h1>
         ${ReturnToFormBtn}
         <h2>Form Data Submitted</h2>
-        <pre>${JSON.stringify(req.body, null, 2)}</pre>
+        <pre>${JSON.stringify(req.body, null, 4)}</pre>
     `
 }
 
@@ -165,6 +170,10 @@ function writeFileToServer(contents, filePath) {
     return filePath
 }
 
+function updateStoredConfigs(CONFIGS) {
+    writeFileToServer(JSON.stringify(CONFIGS), `userConfig.json`)
+}
+
 function ytdlpHelper(Thumbnail, Subtitles, Comments) {
     let str = ``
     if (Thumbnail) str += `--write-thumbnail --convert-thumbnails png `
@@ -225,7 +234,7 @@ let openDirWithScript = `No`
 app.route(`/`).get((req, res) => {
     res.render(`index`, {
         // Global Options
-        openDirWithScript: openDirWithScript,
+        CONFIG: CONFIG,
 
         // Path Values
         YTDLP_Path: YTDLP_Path,
@@ -276,7 +285,7 @@ app.route(`/YT-DLP_GUI`).post((req, res) => {
 
         commandStr += powerOp(req.body.PowerOp);
 
-        writeFileToServer(`${commandStr}${finalLine}`, `${YTDLP_Path}/${fileName}`);
+        writeFileToServer(`${commandStr}\n${finalLine}`, `${YTDLP_Path}/${fileName}`);
         openDir(YTDLP_Path, openDirWithScript);
         res.send(scriptSuccessMessage(YTDLP_Path, fileName));
         return;
@@ -319,7 +328,7 @@ app.route(`/YT-DLP_GUI`).post((req, res) => {
         commandStr = `./${YTDLP_Path} -U\n${commandStr}`;
 
         let fileName = `__DownloadFiles.ps1`;
-        writeFileToServer(`${commandStr}${finalLine}`, `${YTDLP_Path}/${fileName}`);
+        writeFileToServer(`${commandStr}\n${finalLine}`, `${YTDLP_Path}/${fileName}`);
         openDir(YTDLP_Path, openDirWithScript);
         res.send(scriptSuccessMessage(YTDLP_Path, fileName));
         return
@@ -393,7 +402,7 @@ if ($file1Exists -and $file2Exists) {
 }\n\n`
                 }
             }
-            writeFileToServer(`${commandStr}${finalLine}`, `${pathToUse}/${fileName}`);
+            writeFileToServer(`${commandStr}\n${finalLine}`, `${pathToUse}/${fileName}`);
             openDir(pathToUse, true);
             try {
                 res.send(scriptSuccessMessage(pathToUse, fileName));
@@ -433,7 +442,7 @@ if ($file1Exists -and $file2Exists) {
 }\n\n`
                 }
             }
-            writeFileToServer(`${commandStr}${finalLine}`, `${pathToUse}/${fileName}`);
+            writeFileToServer(`${commandStr}\n${finalLine}`, `${pathToUse}/${fileName}`);
             openDir(pathToUse, true);
             try {
                 res.send(scriptSuccessMessage(pathToUse, fileName));
@@ -447,7 +456,9 @@ if ($file1Exists -and $file2Exists) {
             let IncExc_Option = req.body.IncExc_Option
             if (req.body.TrimMedia) IncExc_Option = `All`;
             let IncExc_Items = req.body.IncExc_Items.split(`\r\n`).filter(item => item !== '');
+            let GraphicsCardOp = req.body.GraphicsCardOp;
             let PowerOp = req.body.PowerOp;
+
             let OutputExtensions = req.body.OutputExtensions.split(`\r\n`).filter(item => item !== '');
             let CopyVideoCodec = req.body.CopyVideoCodec;
             let CopyAudioCodec = req.body.CopyAudioCodec;
@@ -466,7 +477,7 @@ if ($file1Exists -and $file2Exists) {
                 let fileNameWithoutExtension = parts.slice(0, parts.length - 1).join('.');
                 let extension = parts[parts.length - 1];
                 return `(TRIMMED) ${fileNameWithoutExtension}~${index + 1}.${extension}`;
-              });
+            });
             let StartTimes = req.body.StartTimes.split(`\r\n`).filter(item => item !== '')
             let EndTimes = req.body.EndTimes.split(`\r\n`).filter(item => item !== '')
 
@@ -482,7 +493,7 @@ if ($file1Exists -and $file2Exists) {
                         <h1 style='color:red'>Invalid Input</h1>
                         <p>The number of InputFileNames, StartTimes, and EndTimes must be the same.</p>
                         ${ReturnToFormBtn}
-                        <pre>${JSON.stringify(req.body, null, 2)}</pre>
+                        <pre>${JSON.stringify(req.body, null, 4)}</pre>
                     </body>
                     `)
                     return
@@ -496,7 +507,7 @@ if ($file1Exists -and $file2Exists) {
                 //             <h1 style='color:red'>Invalid Input</h1>
                 //             <p>The file's input name cannot be the same as its output name.</p>
                 //             ${ReturnToFormBtn}
-                //             <pre>${JSON.stringify(req.body, null, 2)}</pre>
+                //             <pre>${JSON.stringify(req.body, null, 4)}</pre>
                 //         </body>
                 //         `)
                 //         break
@@ -512,14 +523,19 @@ if ($file1Exists -and $file2Exists) {
             if (req.body.TrimMedia && OutputFileNames.length > 0) selectedFiles = OutputFileNames
             else selectedFiles = folderItems
 
-            // Handle modification parameters for output files
-            let modifications = ``
-
-            if (CopyVideoCodec) modifications += `-c:v copy `
-            if (CopyAudioCodec) modifications += `-c:a copy `
+            let hwAccelStr = ``
+            if (GraphicsCardOp === `h264_nvenc`) hwAccelStr = `-hwaccel cuda -hwaccel_output_format cuda`
+            CONFIG.FFMPEG.MostRecentGraphicsCardOp = GraphicsCardOp
 
             let loopStr = ``
             if (req.body.LoopMedia && NumLoops !== ``) loopStr += `-stream_loop ${NumLoops}`
+
+            // Handle modification parameters for output files
+            let modifications = ``
+
+            if (GraphicsCardOp !== `None_UseCPU`) modifications += `-c:v ${GraphicsCardOp} -preset slow -cq 30 -b:v 0 `
+            if (CopyVideoCodec) modifications += `-c:v copy `
+            if (CopyAudioCodec) modifications += `-c:a copy `
 
             let vfFilters = ``
             let afFilters = ``
@@ -567,7 +583,7 @@ if ($file1Exists -and $file2Exists) {
                             if (req.body.AppendToEnd) outFile = `${removeExt(inFile)} (OUTPUT).${ext}`
                             else outFile = `(OUTPUT) ${removeExt(inFile)}.${ext}`
 
-                            commandStr += `ffmpeg ${loopStr} -i "${inFile}" ${modifications} "${outFile}"\n`
+                            commandStr += `ffmpeg ${hwAccelStr} ${loopStr} -i "${inFile}" ${modifications} "${outFile}"\n`
                             // finalExt = ext
                         }
                     } else {    // Use input file extension
@@ -575,18 +591,22 @@ if ($file1Exists -and $file2Exists) {
 
                         if (req.body.AppendToEnd) outFile = `${inFile} (OUTPUT).${ext}`
                         else outFile = `(OUTPUT) ${inFile}`
-                        commandStr += `ffmpeg ${loopStr} -i "${inFile}" ${modifications} "${outFile}"\n`
+                        commandStr += `ffmpeg ${hwAccelStr} ${loopStr} -i "${inFile}" ${modifications} "${outFile}"\n`
                     }
                 }
             }
 
             // Finalize Script
             commandStr += powerOp(PowerOp);
-            writeFileToServer(`${commandStr}${finalLine}`, `${pathToUse}/${fileName}`);
+            commandStr = commandStr.replace(/\s+/g, ' ')
+
+            writeFileToServer(`${commandStr}\n${finalLine}`, `${pathToUse}/${fileName}`);
+            updateStoredConfigs(CONFIG)
+
             openDir(pathToUse, openDirWithScript);
-            try {
-                res.send(scriptSuccessMessage(pathToUse, fileName));
-            } catch { }
+            // try {
+            res.send(scriptSuccessMessage(pathToUse, fileName));
+            // } catch { }
 
         }
     })
@@ -766,7 +786,7 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
                         let subreddit = url[2]
                         let id = url[4]
                         let postName = url[5]
-                        
+
                         let CustomAccName = `UnknownAccountName`
                         if (req.body.CustomAccName) CustomAccName = `${req.body.CustomAccName}`
                         OutputFileNames.push(`${CustomAccName}-${subreddit}-${id}-${postName}-REDDIT`)
@@ -809,7 +829,7 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
             <h1 style='color:red'>Invalid Input</h1>
             <p>Ensure that your file names adhere to the valid format for your specified platform.</p>
             ${ReturnToFormBtn}
-            <pre style='font-size: large'>${JSON.stringify(req.body, null, 2)}</pre>
+            <pre style='font-size: large'>${JSON.stringify(req.body, null, 4)}</pre>
             </body>`)
     }
 })

@@ -28,7 +28,8 @@
         }
 
         select {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: large;
         }
 
@@ -282,7 +283,8 @@
             <h3>Custom Path</h3>
 
             <p>
-                Enter the <b>absolute</b> path of the folder you want to generate the script in below. This field is mandatory:
+                Enter the <b>absolute</b> path of the folder you want to generate the script in below. This field is
+                mandatory:
                 <input class="textInput" name="CustomPath">
             </p>
 
@@ -298,9 +300,9 @@
             <p style="color:purple">If trimming media, these include/exclude options will be ignored entirely.</p>
             <p>
                 <input type="radio" id="IncExc_Option1" name="IncExc_Option" value="All" checked>
-                <label for="IncExc_Option1">All Items In Folder</label>
+                <label for="IncExc_Option1">All Items In Folder</label><br>
                 <input type="radio" id="IncExc_Option2" name="IncExc_Option" value="Include">
-                <label for="IncExc_Option2">Include Only Set Items</label>
+                <label for="IncExc_Option2">Include Only Set Items</label><br>
                 <input type="radio" id="IncExc_Option3" name="IncExc_Option" value="Exclude">
                 <label for="IncExc_Option3">Exclude Only Set Items</label>
             </p>
@@ -311,6 +313,21 @@
                 the chosen folder.
                 <textarea class="textInput" name="IncExc_Items" rows="5"></textarea>
             </p>
+
+            <h3>Graphics Card Options</h3>
+
+            <p>
+                Select the graphics card you want to use. <b>NOTE: </b> Selecting this option will IGNORE the "Copy Video Codec" option below!
+            </p>
+
+            <select name="GraphicsCardOp">
+                <option value="<%= CONFIG.FFMPEG.MostRecentGraphicsCardOp %>" >Most Recent
+                    [ <%= CONFIG.FFMPEG.MostRecentGraphicsCardOp %> ]
+                </option>
+                <option value="None_UseCPU">None (Use CPU)</option>
+                <option value="h264_nvenc">h264_nvenc</option>
+            </select>
+        
 
             <h3>Power Options When Complete</h3>
 
@@ -326,7 +343,6 @@
             <p>For the following sections below, check the boxes if you want to include the corresponding option. If an
                 option's checkbox is not checked, it will not be used. <b>The default functionality assumed is an input
                     an output of the same file type.</b></p>
-
             <fieldset>
                 <input type="checkbox" name="TrimMedia" id="TrimMedia">
                 <label for="TrimMedia">Trim Media?</label>
@@ -396,9 +412,9 @@
 
             <fieldset>
                 <input checked type="radio" name="AudioFilterOp" id="NormalizeAudio" value="NormalizeAudio">
-                <label for="NormalizeAudio">Normalize Audio?</label>
+                <label for="NormalizeAudio">Normalize Audio?</label><br>
                 <input type="radio" name="AudioFilterOp" id="NoAudioFilters" value="NoAudioFilters">
-                <label for="NoAudioFilters">No Audio Filters?</label>
+                <label for="NoAudioFilters">No Audio Filters?</label><br>
                 <input type="radio" name="AudioFilterOp" id="RemoveAudio" value="RemoveAudio">
                 <label for="RemoveAudio">Remove Audio?</label>
 
@@ -761,10 +777,8 @@
                 <p>{{textToChange.toLowerCase()}}</p>
             </fieldset>
             <p>
-                <input style="font-size: large" type="submit" name="SelectedOperation" 
-                    value="Invert Case">
-                <input style="font-size: large" type="submit" name="SelectedOperation" 
-                    value="Randomize Case">
+                <input style="font-size: large" type="submit" name="SelectedOperation" value="Invert Case">
+                <input style="font-size: large" type="submit" name="SelectedOperation" value="Randomize Case">
             </p>
 
             <fieldset>
