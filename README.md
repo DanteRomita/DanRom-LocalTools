@@ -11,6 +11,7 @@ A NodeJS app which provides series of handy tools developed with love by Dante R
 - [eyeD3](https://eyed3.readthedocs.io/en/latest/installation.html) (A Python library for working with audio files. See below for more details.)
 - [moviepy](https://pypi.org/project/moviepy/) (A Python library used for combining audio and thumbnails into an mp4 file. See below for more details.)
 - [FFMPEG](https://www.ffmpeg.org) ("A complete, cross-platform solution to record, convert and stream audio and video." - [ffmpeg.org](https://www.ffmpeg.org))
+
 ## Recommendations
 - Setting Execution Policy to **RemoteSigned** or **Unrestricted** on Windows (***At your own risk!***).
   - By default, .ps1 files may not run for security reasons. A safer alternative is to open each script and copy/paste the contents in a terminal to execute them manually if you don't want to change the execution policy. It's always good practice to read the scripts you're executing beforehand anyways. 🙂
@@ -37,14 +38,17 @@ A NodeJS app which provides series of handy tools developed with love by Dante R
   - A powerful alternative to the PowerRename utility that is also useful for removing unwanted prefixes from your desired files, along with much more!
 - [MP3Gain](https://mp3gain.sourceforge.net) ("MP3Gain analyzes and adjusts mp3 files so that they have the same volume." - [mp3gain.sourceforge.net](mp3gain.sourceforge.net))
   - When working with MP3 files, especially when downloaded from YouTube it can be frustrating to have inconsistent levels of volume. This program helps take care of those inconsistences by changing the volume of each file to a target "normal" volume.
+
 ## Dev Resources
 - [Auto PY to EXE](https://pypi.org/project/auto-py-to-exe/)
   - Useful for development purposes, as creating a .exe file from a .py script is very easy with this converter.
+
 ## Setup Instructions
 1. Clone or download the .zip and save the project to a location of your choice. 
 2. Install all requirements listed above.
 3. Run the **Start-DanRom-LocalTools.exe**, compiled from **Start-DanRom-LocalTools.py** OR run **Start-DanRom-LocalTools.ps1** to start the server.
 4. Navigate to **[http://localhost:2002](http://localhost:2002)** to start using the interface.
+
 ## Legend
 You'll see buttons labelled with the following symbols for various features below. Here are their functions:
 
