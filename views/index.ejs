@@ -161,8 +161,13 @@
             <p>*Takes all mp3s and pngs in the folder and creates a video, provided each respective file exists and has
                 the same name excluding the file extension.</p>
 
-            <p>If you just want to add black image to an MP3 for the purposes of copyright checking, check the box
-                at the bottom. The <b>black.jfif</b> file will be used instead.</p>
+            <p>
+                If you just want to add black image to an MP3 for the purposes of copyright checking, check the box
+                below. The <b>black.jfif</b> file will be used instead.
+            </p>
+
+            <input type="checkbox" name="UseBlack" id="AudioImageToMP4_UseBlack">
+            <label for="AudioImageToMP4_UseBlack">Use Black Image Instead</label>
             <hr>
             <div>
                 Enter all channel, playlist and video links here. <b>(One link per line)</b>
@@ -237,12 +242,6 @@
             <p>*Takes all mp3s and pngs in the folder and creates a video, provided each respective file exists and has
                 the same name excluding the file extension.</p>
 
-            <p>
-                If you just want to add black image to an MP3 for the purposes of copyright checking, check the box
-                at the bottom. The <b>black.jfif</b> file will be used instead.</p>
-
-            <input type="checkbox" name="UseBlack" id="AudioImageToMP4_UseBlack">
-            <label for="AudioImageToMP4_UseBlack">Use Black Image Instead</label>
         </fieldset>
     </form>
 
@@ -317,17 +316,18 @@
             <h3>Graphics Card Options</h3>
 
             <p>
-                Select the graphics card you want to use. <b>NOTE: </b> Selecting this option will IGNORE the "Copy Video Codec" option below!
+                Select the graphics card you want to use. <b>NOTE: </b> Selecting this option will IGNORE the "Copy
+                Video Codec" option below!
             </p>
 
             <select name="GraphicsCardOp">
-                <option value="<%= CONFIG.FFMPEG.MostRecentGraphicsCardOp %>" >Most Recent
+                <option value="<%= CONFIG.FFMPEG.MostRecentGraphicsCardOp %>">Most Recent
                     [ <%= CONFIG.FFMPEG.MostRecentGraphicsCardOp %> ]
                 </option>
                 <option value="None_UseCPU">None (Use CPU)</option>
                 <option value="h264_nvenc">h264_nvenc</option>
             </select>
-        
+
 
             <h3>Power Options When Complete</h3>
 
