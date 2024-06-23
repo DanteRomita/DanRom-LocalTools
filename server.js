@@ -720,7 +720,7 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
                     break;
                 case `FurAffinity`:
                     for (file of InputStrs) {
-                        let id = file[0]
+                        let id = file[1]
                         OutputURLs.push(`https://www.furaffinity.net/view/${id}`)
                     }
                     break;
