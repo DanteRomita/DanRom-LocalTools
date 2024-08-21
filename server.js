@@ -655,7 +655,7 @@ app.route(`/FileName_UrlConverter`).post((req, res) => {
 
                         let embPrefix = ``
                         if (req.body.OptDiscordEmb) embPrefix = `fx`
-                        OutputURLs.push(`https://${embPrefix}twitter.com/${account}/status/${id}`)
+                        OutputURLs.push(`https://${embPrefix}x.com/${account}/status/${id}`)
                     }
                     break;
                 case `Tumblr`:
