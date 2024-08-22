@@ -320,7 +320,7 @@ app.route(`/YT-DLP_GUI`).post((req, res) => {
             }
 
             if (!(Video || Audio)) {
-                commandStr += `${baseStr} '${URL}' ${ytdlpHelper(Thumbnail, Subtitles, Comments)} --max-filesize 0.001k\n`;
+                commandStr += `${baseStr} '${URL}' ${ytdlpHelper(Thumbnail, Subtitles, Comments)} --skip-download\n`;
             }
         }
 
