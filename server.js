@@ -257,6 +257,7 @@ app.route(`/YT-DLP_GUI`).post((req, res) => {
     // Opens the YT-DLP folder
     if (req.body.OpenDir) {
         openDir(YTDLP_Path, true);
+        res.sendStatus(204);
         return;
     }
 
@@ -354,6 +355,7 @@ app.route(`/FFMPEG_GUI`)
 
         if (req.body.OpenDir) {
             openDir(pathToUse, true);
+            res.sendStatus(204);
             return
         }
 
