@@ -185,7 +185,7 @@ function ytdlpHelper(Thumbnail, Subtitles, Comments) {
 function FileName_Url_Helper(outputStrs, isURL) {
     let outputHTMLstr = `<body style='word-wrap: break-word'>${ReturnToFormBtn}`
 
-    if (isURL) for (str of outputStrs) outputHTMLstr += `<fieldset><a href='${str}'>${str}</a></fieldset>`
+    if (isURL) for (str of outputStrs) outputHTMLstr += `<fieldset><a style='font-family: monospace' href='${str}'>${str}</a></fieldset>`
     else for (str of outputStrs) outputHTMLstr += `<fieldset>${str}</fieldset>`
 
     outputHTMLstr += `</body>`
@@ -478,7 +478,7 @@ if ($file1Exists -and $file2Exists) {
                 let parts = fileName.split('.');
                 let fileNameWithoutExtension = parts.slice(0, parts.length - 1).join('.');
                 let extension = parts[parts.length - 1];
-                return `(TRIMMED) ${fileNameWithoutExtension}~${index + 1}.${extension}`;
+                return `(TRIMMED) ${fileNameWithoutExtension} {${index + 1}}.${extension}`;
             });
             let StartTimes = req.body.StartTimes.split(`\r\n`).filter(item => item !== '')
             let EndTimes = req.body.EndTimes.split(`\r\n`).filter(item => item !== '')
